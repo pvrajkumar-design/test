@@ -1,0 +1,229 @@
+import static com.kms.katalon.core.testcase.TestCaseFactory.findTestCase
+import static com.kms.katalon.core.testdata.TestDataFactory.findTestData
+import static com.kms.katalon.core.testobject.ObjectRepository.findTestObject
+import com.kms.katalon.core.checkpoint.Checkpoint as Checkpoint
+import com.kms.katalon.core.cucumber.keyword.CucumberBuiltinKeywords as CucumberKW
+import com.kms.katalon.core.mobile.keyword.MobileBuiltInKeywords as Mobile
+import com.kms.katalon.core.model.FailureHandling as FailureHandling
+import com.kms.katalon.core.testcase.TestCase as TestCase
+import com.kms.katalon.core.testdata.TestData as TestData
+import com.kms.katalon.core.testobject.TestObject as TestObject
+import com.kms.katalon.core.webservice.keyword.WSBuiltInKeywords as WS
+import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
+import internal.GlobalVariable as GlobalVariable
+import org.openqa.selenium.By as By
+import org.openqa.selenium.WebDriver as WebDriver
+import org.openqa.selenium.WebElement as WebElement
+import com.kms.katalon.core.webui.driver.DriverFactory as DriverFactory
+import org.openqa.selenium.Keys as Keys
+
+'Navigate to the application url'
+CustomKeywords.'com.maxids.CustomFunctions.navigateToLogin'(Baseurl, Clientname)
+'Login into the application'
+CustomKeywords.'com.maxids.CustomFunctions.login'(Username, Password)
+
+dashboardlabel = WebUI.getText(findTestObject('Object Repository/Dashboard/div_DashboardBreadCrumb'))
+
+'Verify message after loading the dashboard page'
+WebUI.verifyEqual(dashboardlabel.trim(), 'Summary')
+
+'Choose the references US Application, US Patent, Foreign Journal and Others'
+WebUI.setText(findTestObject('Dashboard/input_RecordID'), Referencerecord)
+
+'Search the reference record'
+WebUI.click(findTestObject('Dashboard/dashboardbutton_Search'))
+
+WebUI.waitForPageLoad(50)
+
+'Choose all the references'
+WebUI.click(findTestObject('Object Repository/Listview/Page_Max-IDS - 4.3.7023.672/Listview_input__chkSelecteall'))
+
+WebUI.delay(2)
+
+'Click Action and choose Associate'
+WebUI.click(findTestObject('Object Repository/Listview/Page_Max-IDS - 4.3.7023.672/Listview_a_Action'))
+
+WebUI.waitForElementClickable(findTestObject('Object Repository/Associate_Listview/Page_Max-IDS - 4.3.7025.754/Listview_a_Associate'),
+		90)
+
+WebUI.click(findTestObject('Object Repository/Associate_Listview/Page_Max-IDS - 4.3.7025.754/Listview_a_Associate'))
+
+WebUI.waitForPageLoad(30)
+
+'Search docket Record id :'
+WebUI.setText(findTestObject('Object Repository/Associate_Listview/Page_Max-IDS - 4.3.7023.672/Associate search_input_Update_txtValue'),
+		Associatedocket)
+
+'press the enter key'
+WebUI.sendKeys(findTestObject('Object Repository/Associate_Listview/Page_Max-IDS - 4.3.7023.672/Associate search_input_Update_txtValue'),
+		Keys.chord(Keys.ENTER))
+
+not_run: WebUI.click(findTestObject('Object Repository/Associate_Listview/Page_Max-IDS - 4.3.7023.672/Associate button_Search'))
+
+WebUI.delay(3)
+
+'Choose all the docket'
+WebUI.click(findTestObject('Object Repository/Associate_Listview/Page_Max-IDS - 4.3.7023.672/Associate_input__chkSelecteall'))
+
+WebUI.delay(1)
+
+'submit the docket'
+WebUI.click(findTestObject('Object Repository/Associate_Listview/Page_Max-IDS - 4.3.7023.672/Associate_button_Submit'))
+
+WebUI.delay(3)
+
+'Choose Reference category'
+WebUI.selectOptionByValue(findTestObject('Object Repository/Associate_Listview/Associatepopup/Page_Max-IDS - 4.3.7023.672/Ref_category_select'),
+		Referencecategory, false)
+
+WebUI.waitForElementClickable(findTestObject('Object Repository/Associate_Listview/Associatepopup/Page_Max-IDS - 4.3.7023.672/associate_sourcedropdown'),
+		90)
+
+'Choose Source'
+WebUI.selectOptionByLabel(findTestObject('Object Repository/Associate_Listview/Associatepopup/Page_Max-IDS - 4.3.7023.672/associate_sourcedropdown'),
+		Source, false)
+
+WebUI.waitForElementClickable(findTestObject('Object Repository/Associate_Listview/Associatepopup/Page_Max-IDS - 4.3.7023.672/_txtSourceDate'),
+		90)
+
+'Enter Source date'
+WebUI.setText(findTestObject('Object Repository/Associate_Listview/Associatepopup/Page_Max-IDS - 4.3.7023.672/_txtSourceDate'),
+		Sourcedate)
+
+WebUI.waitForElementClickable(findTestObject('Object Repository/Associate_Listview/Associatepopup/Page_Max-IDS - 4.3.7023.672/associate_source__txtComments'),
+		90)
+
+'Enter Source comments'
+WebUI.setText(findTestObject('Object Repository/Associate_Listview/Associatepopup/Page_Max-IDS - 4.3.7023.672/associate_source__txtComments'),
+		Sourcecomments)
+
+'Choose mark as cited checkbox'
+WebUI.click(findTestObject('Object Repository/Associate_Listview/Associatepopup/Page_Max-IDS - 4.3.7023.672/input_Mark as Cited'))
+
+'Enter cited date'
+WebUI.setText(findTestObject('Object Repository/Associate_Listview/Associatepopup/Page_Max-IDS - 4.3.7023.672/input_Mark as Cited_txtCitedDate'), Citeddate)
+
+'submit the associate action'
+WebUI.click(findTestObject('Object Repository/Associate_Listview/Associatepopup/Page_Max-IDS - 4.3.7023.672/associate_button_Submit'))
+
+'Association Verification process'
+
+'move to Record Detail view'
+CustomKeywords.'com.maxids.CustomFunctions.navigateToRecordDetailView'(Baseurl, Clientname, Associatedocketrecordno)
+
+WebUI.delay(5)
+
+WebDriver driver = DriverFactory.getWebDriver()
+
+'Check the reference state, source, source date,source comments for US references'
+WebElement USTable = driver.findElement(By.xpath('//*[@id=\'usRef\']/tbody'))
+
+List<WebElement> USrows_table = USTable.findElements(By.tagName('tr'))
+
+int USrows_count = USrows_table.size()
+
+def US_Reference_Record = []
+
+US_Reference_Record.addAll(USReferencerecord)
+
+for (String US_Ref_Item : US_Reference_Record) {
+	for (int row = 1; row <= USrows_count; row++) {
+		'To locate Record id column td =5'
+		String RecordId = driver.findElement(By.xpath('//*[@id=\'usRef\']/tbody/tr[' + row + ']/td[5]')).getText()
+
+		if (RecordId == US_Ref_Item) {
+			String Reference_State = driver.findElement(By.xpath('//*[@id=\'usRef\']/tbody/tr[' + row + ']/td[4]/span[4]/font/b')).getText()
+
+			WebUI.verifyEqual(Reference_State, '√')
+
+			String Source_Value = driver.findElement(By.xpath('//*[@id=\'usRef\']/tbody/tr[' + row + ']/td[12]')).getText()
+
+			WebUI.verifyEqual(Source_Value, Source)
+
+			String Source_comments = driver.findElement(By.xpath('//*[@id=\'usRef\']/tbody/tr[' + row + ']/td[13]')).getText()
+
+			WebUI.verifyEqual(Source_comments, Sourcecomments)
+
+			String Source_Date = driver.findElement(By.xpath('//*[@id=\'usRef\']/tbody/tr[' + row + ']/td[14]/span')).getText()
+
+			WebUI.verifyEqual(Source_Date, Sourcedate)
+
+			break
+		}
+	}
+}
+
+'Check the reference state, source, source date,source comments for Foreign references'
+WebElement FRTable = driver.findElement(By.xpath('//*[@id="forRef"]/tbody'))
+
+List<WebElement> FRrows_table = FRTable.findElements(By.tagName('tr'))
+
+int FRrows_count = FRrows_table.size()
+
+def FR_Reference_Record = []
+
+FR_Reference_Record.addAll(FRReferencerecord)
+
+for (String FR_Ref_Item : FR_Reference_Record) {
+	for (int row = 1; row <= FRrows_count; row++) {
+		'To locate Record id column td =5'
+		String RecordId = driver.findElement(By.xpath('//*[@id="forRef"]/tbody/tr[' + row + ']/td[5]')).getText()
+
+		if (RecordId == FR_Ref_Item) {
+			String Reference_State = driver.findElement(By.xpath('//*[@id="forRef"]/tbody/tr[' + row + ']/td[4]/span[4]/font/b')).getText()
+
+			WebUI.verifyEqual(Reference_State, '√')
+
+			String Source_Value = driver.findElement(By.xpath('//*[@id="forRef"]/tbody/tr[' + row + ']/td[12]')).getText()
+
+			WebUI.verifyEqual(Source_Value, Source)
+
+			String Source_comments = driver.findElement(By.xpath('//*[@id="forRef"]/tbody/tr[' + row + ']/td[13]')).getText()
+
+			WebUI.verifyEqual(Source_comments, Sourcecomments)
+
+			String Source_Date = driver.findElement(By.xpath('//*[@id="forRef"]/tbody/tr[' + row + ']/td[14]/span')).getText()
+
+			WebUI.verifyEqual(Source_Date, Sourcedate)
+			break
+		}
+	}
+}
+
+'Check the reference state, source, source date,source comments for npl references'
+WebElement NPLTable = driver.findElement(By.xpath('//*[@id="othRef"]/tbody'))
+
+List<WebElement> NPLrows_table = NPLTable.findElements(By.tagName('tr'))
+
+int NPLrows_count = NPLrows_table.size()
+
+def NPL_Reference_Record = []
+
+NPL_Reference_Record.addAll(NPLReferencerecord)
+
+for (String NPL_Ref_Item : US_Reference_Record) {
+	for (int row = 1; row <= NPLrows_count; row++) {
+		'To locate Record id column td =5'
+		String RecordId = driver.findElement(By.xpath('//*[@id="othRef"]/tbody/tr[' + row + ']/td[5]')).getText()
+
+		if (RecordId == NPL_Ref_Item) {
+			String Reference_State = driver.findElement(By.xpath('//*[@id="othRef"]/tbody/tr[' + row + ']/td[4]/span[4]/font/b')).getText()
+
+			WebUI.verifyEqual(Reference_State, '√')
+
+			String Source_Value = driver.findElement(By.xpath('//*[@id="othRef"]/tbody/tr[' + row + ']/td[8]')).getText()
+
+			WebUI.verifyEqual(Source_Value, Source)
+
+			String Source_comments = driver.findElement(By.xpath('//*[@id="othRef"]/tbody/tr[' + row + ']/td[9]')).getText()
+
+			WebUI.verifyEqual(Source_comments, Sourcecomments)
+
+			String Source_Date = driver.findElement(By.xpath('//*[@id="othRef"]/tbody/tr[' + row + ']/td[10]/span')).getText()
+
+			WebUI.verifyEqual(Source_Date, Sourcedate)
+		}
+	}
+}
+
+WebUI.closeBrowser()

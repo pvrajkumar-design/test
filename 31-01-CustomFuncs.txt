@@ -1,0 +1,674 @@
+package com.maxids
+import static com.kms.katalon.core.testobject.ObjectRepository.findTestObject
+
+import org.openqa.selenium.By
+import org.openqa.selenium.JavascriptExecutor
+import org.openqa.selenium.Keys
+import org.openqa.selenium.WebDriver
+import org.openqa.selenium.WebElement
+import org.openqa.selenium.interactions.Actions
+
+import com.kms.katalon.core.annotation.Keyword
+import com.kms.katalon.core.testobject.ConditionType
+import com.kms.katalon.core.testobject.RequestObject
+import com.kms.katalon.core.testobject.ResponseObject
+import com.kms.katalon.core.testobject.TestObject
+import com.kms.katalon.core.webservice.keyword.WSBuiltInKeywords
+import com.kms.katalon.core.webui.driver.DriverFactory
+import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
+import java.sql.ResultSet
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+
+
+
+class CustomFunctions {
+	//WebDriver driver = DriverFactory.getWebDriver()
+	def detailUrl ='DetailedView/Index?RecordId='
+	def editUrl = 'editrecord/index?mode=edit&refno='
+
+
+
+	@Keyword
+	def login(String username,String password) {
+		String title = WebUI.getWindowTitle()
+
+		//Input user name
+		WebUI.setText(findTestObject('Object Repository/LoginPage/input_LoginUserName'),
+				username)
+
+		// Input password'
+		WebUI.setText(findTestObject('Object Repository/LoginPage/input_LoginPassword'),
+				password)
+
+		// wait for 10 seconds'
+		WebUI.waitForPageLoad(10)
+
+		//Click on Login button to navigate to Dashboard page'
+		WebUI.click(findTestObject('Object Repository/LoginPage/input_LoginSubmitButton'))
+
+		WebUI.waitForPageLoad(10)
+
+
+		WebUI.click(findTestObject('Object Repository/LoginPage/input_acceptTermsAndConditions'))
+
+		WebUI.waitForPageLoad(10)
+	}
+
+	@Keyword
+	def navigateToLogin(String url,String clientName){
+		String applicationUrl = url + clientName
+		WebUI.openBrowser('')
+		WebUI.maximizeWindow()
+		WebUI.navigateToUrl(applicationUrl)
+	}
+
+	@Keyword
+	def navigateToRecordDetailView(String url,String clientName,String recordId){
+		String applicationUrl = url + clientName
+		String formDetailUrl = applicationUrl+detailUrl+recordId
+		WebUI.navigateToUrl(formDetailUrl)
+	}
+
+	@Keyword
+	def navigateToRecordEditPage(String url,String clientName,String recordId){
+		String applicationUrl = url + clientName
+		String formDetailUrl = applicationUrl+editUrl+"${recordId}&from=DetailedView"
+		println formDetailUrl
+		WebUI.navigateToUrl(formDetailUrl)
+	}
+
+
+	@Keyword
+	def getPageResponseCode(String pageURL){
+		RequestObject ro = new RequestObject()
+		ro.setRestRequestMethod("GET")
+		ro.setRestUrl(pageURL)
+		ResponseObject resp = WSBuiltInKeywords.sendRequest(ro)
+		println resp.getStatusCode()
+		return resp.getStatusCode()
+	}
+
+
+
+
+	@Keyword
+	def passignQueryinFullTextfield(String fQuery){
+		WebUI.setText(findTestObject('Dashboard/input_txtfulltextsearch'), fQuery)
+		WebUI.delay(3)
+		WebUI.scrollToElement(findTestObject('Dashboard/dashboardbutton_Search'), 2)
+		WebUI.click(findTestObject('Dashboard/dashboardbutton_Search'))
+		WebUI.delay(6)
+	}
+
+
+	@Keyword
+	def fieldWiseSearchDashboard(TestObject objectto,String value){
+		WebUI.setText((objectto),value)
+		WebUI.delay(4)
+		WebUI.click(findTestObject('Dashboard/dashboardbutton_Search'))
+		WebUI.delay(6)
+
+	}
+
+	@Keyword
+	def addNewUser(String firstName, String lastName,String emailId, String contactNo, String userName, String password, String userType)
+	{
+		'Input firstname'
+		WebUI.setText(findTestObject('Settings/UserModule/input_UserFirstName'), firstName)
+
+		WebUI.delay(1)
+
+		'Input lastname'
+		WebUI.setText(findTestObject('Settings/UserModule/input_UserLastName'), lastName)
+
+		WebUI.delay(1)
+
+		'Input email address'
+		WebUI.setText(findTestObject('Settings/UserModule/input_user_emailAddress'), emailId)
+
+		WebUI.delay(1)
+
+		'Input contactno'
+		WebUI.setText(findTestObject('Settings/UserModule/input_user_contactnumber'), contactNo)
+
+		WebUI.delay(1)
+
+		'Input username'
+		WebUI.setText(findTestObject('Settings/UserModule/input_user_username'), userName)
+
+		WebUI.delay(1)
+
+		'press the tab key'
+		WebUI.sendKeys(findTestObject('Settings/UserModule/input_user_username'), Keys.chord(
+				Keys.TAB))
+
+		'Enter the password'
+		WebUI.setText(findTestObject('Settings/UserModule/input_user_password'), password)
+
+		WebUI.delay(1)
+
+		'press the tab key'
+		WebUI.sendKeys(findTestObject('Settings/UserModule/input_user_password'), Keys.chord(
+				Keys.TAB))
+
+		'Enter the confirm password'
+		WebUI.setText(findTestObject('Settings/UserModule/input_user_confirmpassword'),
+				password)
+
+		WebUI.delay(1)
+
+		'click the next button'
+		WebUI.click(findTestObject('Settings/UserModule/link_CreateUser_Next'))
+
+		WebUI.delay(5)
+
+
+
+		'Select the user type'
+		WebUI.selectOptionByLabel(findTestObject('Settings/UserModule/dropdown_select_UserRole'),
+				userType, false)
+
+		WebUI.delay(6)
+
+		'Unchecked send account info to user'
+		WebUI.scrollToElement(findTestObject('Settings/UserModule/input_checkbox_SendAccountInfo'), 2)
+		WebUI.click(findTestObject('Settings/UserModule/input_checkbox_SendAccountInfo'))
+
+		WebUI.delay(5)
+
+		'Click the save button'
+		WebUI.scrollToElement(findTestObject('Settings/UserModule/link_SaveAddNewUser'), 2)
+		WebUI.click(findTestObject('Settings/UserModule/link_SaveAddNewUser'))
+
+		WebUI.delay(10)
+
+	}
+
+	@Keyword
+	def assignGroupUserAndRecord(String groupID,String action){
+		WebDriver driver = DriverFactory.getWebDriver()
+		'move to the group checkbox'
+		WebElement findCheckBox = driver.findElement(By.xpath("//li[@id='${groupID}']/a"))
+		int x = findCheckBox.getLocation().getX()
+		int y = findCheckBox.getLocation().getY()
+		WebUI.scrollToPosition(x, y)
+		findCheckBox.click()
+		WebUI.delay(10)
+		if(action=='assignUser'){
+
+			WebUI.waitForElementClickable(findTestObject('AssignGroupPopup/button_chooseGroupandSave'), 1)
+
+			'save the user details'
+			WebUI.scrollToElement(findTestObject('AssignGroupPopup/button_chooseGroupandSave'), 2)
+			WebUI.delay(1)
+			WebUI.click(findTestObject('AssignGroupPopup/button_chooseGroupandSave'))
+
+			WebUI.delay(4)
+		} else{
+			WebUI.waitForElementClickable(findTestObject('Import page/input_submit'), 5)
+
+			'submit the pat/pub no'
+			WebUI.click(findTestObject('Import page/input_submit'))
+		}
+
+	}
+
+	@Keyword
+	def createNewGroup(String newGroupName){
+		def actualSuccessMessage
+		WebUI.rightClick(findTestObject('GroupCreation/rightclickMainnode'))
+
+		WebUI.click(findTestObject('GroupCreation/chooseCreate'))
+
+		WebUI.setText(findTestObject('GroupCreation/input_enterGroupName'),
+				newGroupName)
+
+		WebUI.sendKeys(findTestObject('GroupCreation/input_enterGroupName'),
+				Keys.chord(Keys.ENTER))
+
+
+		boolean successMessage = WebUI.verifyElementVisible(findTestObject('Object Repository/toasterpopup/div_ToasterSuccessMessage'))
+		println successMessage
+		if(successMessage){
+			actualSuccessMessage = WebUI.getText(findTestObject('Object Repository/toasterpopup/div_ToasterSuccessMessage')).replace('×', '').trim()
+			println actualSuccessMessage
+		}
+		return actualSuccessMessage
+	}
+
+	@Keyword
+	def assignToCategory(String categoryID){
+		WebDriver driver = DriverFactory.getWebDriver()
+
+		WebElement locateCategory = driver.findElement(By.xpath("//*[@id='${categoryID}']/a"))
+		WebUI.delay(3)
+		int x = locateCategory.getLocation().getX()
+		int y = locateCategory.getLocation().getY()
+		WebUI.scrollToPosition(x, y)
+		locateCategory.click()
+		WebUI.delay(3)
+		WebUI.click(findTestObject('Object Repository/Listview/Page_Max-IDS - 4.3.7023.672/button_update assignment'))
+		WebUI.delay(7)
+		/*
+		 WebElement categoryOrder = driver.findElement(By.xpath("//*[@id='1']/ul"))
+		 WebElement firstCategoryName = driver.findElement(By.xpath("//*[@id='1']/ul/li[1]/a"))
+		 String categoryName = firstCategoryName.getText()
+		 int startIndex = categoryName.indexOf("[");
+		 String expectedCategoryName = categoryName.substring(0,startIndex);
+		 return expectedCategoryName*/
+	}
+
+
+	@Keyword
+	def createNewCategory(String newCategoryName){
+		def actualSuccessMessage
+		WebUI.rightClick(findTestObject('Category/rightclickMainnode'))
+
+		WebUI.click(findTestObject('Category/chooseCreate'))
+
+		WebUI.setText(findTestObject('Category/input_enterCategoryName'),
+				newCategoryName)
+
+		WebUI.sendKeys(findTestObject('Category/input_enterCategoryName'),
+				Keys.chord(Keys.ENTER))
+
+		boolean successMessage = WebUI.verifyElementVisible(findTestObject('Object Repository/toasterpopup/div_ToasterSuccessMessage'))
+		println successMessage
+		if(successMessage){
+			actualSuccessMessage = WebUI.getText(findTestObject('Object Repository/toasterpopup/div_ToasterSuccessMessage')).replace('×', '').trim()
+			println actualSuccessMessage
+		}
+		return actualSuccessMessage
+	}
+
+
+	@Keyword
+	def updateCategory(String categoryID, String categoryName){
+		def actualSuccessMessage
+		WebDriver driver = DriverFactory.getWebDriver()
+
+		WebElement locateCategory = driver.findElement(By.xpath("//*[@id='$categoryID']/a"))
+		WebUI.delay(3)
+		int x = locateCategory.getLocation().getX()
+		int y = locateCategory.getLocation().getY()
+		WebUI.scrollToPosition(x, y)
+		String xpath = '//*[@id="' + categoryID + '"]'
+		TestObject to = new TestObject("objectName")
+		to.addProperty("xpath", ConditionType.EQUALS, xpath)
+		WebUI.rightClick(to)
+		WebUI.delay(4)
+		WebUI.click(findTestObject('Category/chooseRename'))
+		WebElement df = driver.findElement(By.xpath("//li[@id='$categoryID']/span/input"))
+		df.sendKeys(categoryName)
+		df.sendKeys(Keys.ENTER)
+
+		boolean successMessage = WebUI.verifyElementVisible(findTestObject('Object Repository/toasterpopup/div_ToasterSuccessMessage'))
+		println successMessage
+		if(successMessage){
+			actualSuccessMessage = WebUI.getText(findTestObject('Object Repository/toasterpopup/div_ToasterSuccessMessage')).replace('×', '').trim()
+			println actualSuccessMessage
+		}
+		return actualSuccessMessage
+	}
+
+	@Keyword
+	def deleteCategory(String categoryID, String categoryName){
+
+		def actualSuccessMessage
+		WebDriver driver = DriverFactory.getWebDriver()
+		Actions actions = new Actions(driver)
+		WebElement locateCategory = driver.findElement(By.xpath("//*[@id='$categoryID']/a"))
+		WebUI.delay(3)
+		int x = locateCategory.getLocation().getX()
+		int y = locateCategory.getLocation().getY()
+		WebUI.scrollToPosition(x, y)
+		locateCategory.click()
+		actions.contextClick(locateCategory).perform()
+		WebUI.delay(5)
+		//WebUI.rightClickOffset(to, x, y)
+		WebUI.click(findTestObject('Category/chooseDelete'))
+
+		//Accept warning popup
+		def elementPresent=WebUI.waitForAlert(10)
+		if (elementPresent==true) {
+			assert elementPresent ==true
+			def alertText = WebUI.getAlertText()
+			println alertText
+			WebUI.acceptAlert()
+		}
+
+		boolean successMessage = WebUI.verifyElementVisible(findTestObject('Object Repository/toasterpopup/div_ToasterSuccessMessage'))
+		println successMessage
+		if(successMessage){
+			actualSuccessMessage = WebUI.getText(findTestObject('Object Repository/toasterpopup/div_ToasterSuccessMessage')).replace('×', '').trim()
+			println actualSuccessMessage
+		}
+		return actualSuccessMessage
+	}
+
+	@Keyword
+	boolean isFileDownloaded(String downloadPath, String fileName) {
+		File dir = new File(downloadPath);
+		File[] dirContents = dir.listFiles();
+		println dirContents.length
+
+		for (int i = 0; i < dirContents.length; i++) {
+			if (dirContents[i].getName().contains(fileName)) {
+				// downlaod path C:\Users\prabakar\Downloads
+				return true;
+			}
+		}
+		return false;
+	}
+
+
+	@Keyword
+	def referredInTabRecordSelection(String expectedRefState,String tableid){
+		WebDriver driver = DriverFactory.getWebDriver()
+		def selectedRecordId =''
+
+		WebElement RefTable = driver.findElement(By.xpath("//*[@id='${tableid}']/tbody"))
+		//*[@id="tblRefIn"]/tbody
+
+		List<WebElement> rowOfTable = RefTable.findElements(By.tagName('tr'))
+		int Totalcount = rowOfTable.size()
+		for (int row : (1..Totalcount)) {
+			WebElement elementState = driver.findElement(By.xpath("//*[@id='${tableid}']/tbody/tr[${row}]/td[3]"))
+			Actions actions = new Actions(driver)
+			actions.moveToElement(elementState).perform()
+
+
+			String actualRefState = driver.findElement(By.xpath("//*[@id='${tableid}']/tbody/tr[${row}]/td[3]")).getText()
+
+			if (actualRefState == expectedRefState) {
+
+				selectedRecordId = driver.findElement(By.xpath("//*[@id='${tableid}']/tbody/tr[${row}]/td[4]/span")).getText()
+				WebElement chooseReference = driver.findElement(By.xpath("//*[@id='${tableid}']/tbody/tr[${row}]/td[2]"))
+				actions.moveToElement(chooseReference).click().perform()
+				WebUI.delay(4)
+
+				break
+			}
+		}
+		WebUI.scrollToPosition(0, 0)
+		println selectedRecordId
+		return selectedRecordId
+	}
+
+	@Keyword
+	def referredInTabFlaggedReferenceSelection(String state,String tableid){
+		def output = [:]
+		WebDriver driver = DriverFactory.getWebDriver()
+		WebElement RefTable = driver.findElement(By.xpath("//*[@id='${tableid}']/tbody"))
+		List<WebElement> RowsOf_RefTable = RefTable.findElements(By.tagName('tr'))
+		int Totalcount = RowsOf_RefTable.size()
+		if(state=='flag'){
+			for (int row : (1..Totalcount)) {
+
+				boolean isPresentFr = driver.findElements(By.xpath("//*[@id='${tableid}']/tbody/tr[${row}]/td[3]/span[1]/span/i")).size() > 0
+
+
+				if(isPresentFr){
+
+					'collect the reference record id'
+					String selectedRecordID = driver.findElement(By.xpath("//*[@id='${tableid}']/tbody/tr[${row}]/td[4]/span")).getText()
+
+
+					'collect the reference current state'
+					String selectedRecordState = driver.findElement(By.xpath("//*[@id='${tableid}']/tbody/tr[${row}]/td[3]/span/span/font")).getText()
+					//*[@id="tblRefIn"]/tbody/tr[13]/td[3]/span/span
+
+					//*[@id='tblRefIn']/tbody/tr[${row}]/td[3]/span[2]/span/font
+
+					//*[@id="tblRefIn"]/tbody/tr[3]/td[3]/span[2]/span/font/b
+					//*[@id="tblRefIn"]/tbody/tr[13]/td[3]/span/span/font/b
+					//*[@id="tblRefIn"]/tbody/tr[3]/td[3]/span[2]
+
+					WebElement elementState = driver.findElement(By.xpath("//*[@id='${tableid}']/tbody/tr[${row}]/td[2]"))
+					Actions actions = new Actions(driver);
+					actions.moveToElement(elementState).perform();
+
+					WebUI.delay(2)
+
+					'choose the reference record'
+					WebElement chooseReference = driver.findElement(By.xpath("//*[@id='${tableid}']/tbody/tr[${row}]/td[2]")).click()
+					output.put("recordid",selectedRecordID)
+					output.put("referencestate",selectedRecordState)
+					WebUI.scrollToPosition(0, 0)
+					break
+				}
+			}
+
+		}
+		println output
+
+		return output
+	}
+
+	@Keyword
+	def recordSelectionFromImportList(String expStatus){
+		String selectedRecordID =''
+		WebDriver driver = DriverFactory.getWebDriver()
+		'move to Import table'
+		WebElement importTable = driver.findElement(By.xpath("//*[@id='impcategory']/div/table/tbody"))
+		List<WebElement>tableRows = importTable.findElements(By.tagName("tr"))
+		for (int row : (1..tableRows.size())) {
+			'check the Import status value'
+			WebElement importStatus = driver.findElement(By.xpath("//*[@id='impcategory']/div/table/tbody/tr[$row]/td[8]"))
+			String importStatusValue = importStatus.getText()
+			if(importStatusValue==expStatus){
+				'Choose the record'
+				WebElement chooseRecord = driver.findElement(By.xpath("//*[@id='impcategory']/div/table/tbody/tr[$row]/td[1]/input")).click()
+				'Collect the record id'
+				selectedRecordID = driver.findElement(By.xpath("//*[@id='impcategory']/div/table/tbody/tr[$row]/td[4]")).getText()
+				break
+			}
+		}
+		println selectedRecordID
+		return selectedRecordID
+	}
+
+	@Keyword
+	def getSummaryCountInDashboard(){
+		def dashboardSummaryCount =[:]
+
+		String publishedCount = WebUI.getText(findTestObject('Dashboard/recentlyPublished'))
+		int actualPublishedCount = Integer.parseInt(publishedCount.replaceAll("[^0-9]", ""));
+		dashboardSummaryCount.put("published",actualPublishedCount)
+
+
+		String newlyAddedCount = WebUI.getText(findTestObject('Dashboard/newlyAdded'))
+		int actualNewlyaddedCount = Integer.parseInt(newlyAddedCount.replaceAll("[^0-9]", ""));
+		dashboardSummaryCount.put("newcount",actualNewlyaddedCount)
+
+
+		String usIssuedCount = WebUI.getText(findTestObject('Dashboard/usIssued'))
+		int actualUSIssuedCount = Integer.parseInt(usIssuedCount.replaceAll("[^0-9]", ""));
+		dashboardSummaryCount.put("issued",actualUSIssuedCount)
+
+
+		String usApplicationCount = WebUI.getText(findTestObject('Dashboard/usApplication'))
+		int actualUSApplicationCount = Integer.parseInt(usApplicationCount.replaceAll("[^0-9]", ""));
+		dashboardSummaryCount.put("application",actualUSApplicationCount)
+
+
+		String rowCount = WebUI.getText(findTestObject('Dashboard/row'))
+		int actualrowCount = Integer.parseInt(rowCount.replaceAll("[^0-9]", ""));
+		dashboardSummaryCount.put("row",actualrowCount)
+
+		return dashboardSummaryCount
+	}
+
+
+	@Keyword
+	def documentUpload(String tableId,String uploadFilePath){
+		WebDriver driver = DriverFactory.getWebDriver()
+		WebElement RefTable = driver.findElement(By.xpath("//*[@id='${tableId}']/tbody"))
+		List<WebElement> RowsOf_RefTable = RefTable.findElements(By.tagName('tr'))
+		int Totalcount = RowsOf_RefTable.size()
+		for (int row : (1..Totalcount)) {
+			boolean isattachmentAvailable = driver.findElements(By.xpath("//*[@id='${tableId}']/tbody/tr[$row]/td[4]/span[1]/a")).size() > 0
+			println isattachmentAvailable
+			if(!isattachmentAvailable){
+				//WebElement clcikUpload = driver.findElement(By.xpath("//*[@id='usRef']/tbody/tr[$row]/td[3]")).click()
+				WebUI.delay(5)
+				String xpath = '//*[@id="'+tableId+'"]/tbody/tr['+row+']/td[3]'
+				println xpath
+				TestObject to = new TestObject("objectName")
+				to.addProperty("xpath", ConditionType.EQUALS, xpath)
+				WebUI.click(to)
+				WebUI.uploadFile(to, uploadFilePath)
+
+				break
+			}else{
+				println "available"
+			}
+		}
+	}
+
+	@Keyword
+	def getResultCountInSearchList(String urlNew,String query){
+
+		'Navigate to the advanced search page'
+		WebUI.navigateToUrl(urlNew+'AdvancedSearch/Index')
+		WebUI.delay(5)
+		int resultSetCount
+		WebDriver driver = DriverFactory.getWebDriver()
+		'Passing the full-text query in the advanced search page'
+		WebUI.setText(findTestObject('AdvancedSearch/input_advancedSearchFullText'),query)
+		WebUI.delay(2)
+
+		'press the enter key'
+		WebUI.sendKeys(findTestObject('AdvancedSearch/input_advancedSearchFullText'),
+				Keys.chord(Keys.ENTER))
+		//WebUI.delay(10)
+		'Wait for list to be present in 20s'
+		WebUI.waitForElementVisible(findTestObject('Object Repository/Listview/Page_Max-IDS - 4.3.7023.672/SelectFirstRecord'), 20)
+
+		String currentURL = WebUI.getUrl()
+
+		if(!currentURL.contains("DetailedView")){
+			'Check if resultset exist'
+			WebElement resultTable = driver.findElement(By.xpath("//*[@id='tblgrid']"))
+			String className = resultTable.getAttribute("class")
+			'Result available'
+			if ((className=="tables adminlist tablesorter tablesorter-blue hasCheckbox no-footer dataTable" || className=="tables adminlist tablesorter tablesorter-blue hasCheckbox dataTable no-footer")){
+				'Result Available '
+				String resultSet = driver.findElement(By.xpath("//div[@id='nav']/div/span/span[3]/b")).getText()
+				resultSetCount  = resultSet as Integer
+
+			}
+			else{
+				'Result not availble - NO Records'
+				resultSetCount = 0
+			}
+
+		}else{
+			resultSetCount =1
+		}
+		return resultSetCount
+	}
+
+	@Keyword
+	def addReminder(String subject, String details, String dueDate){
+		WebDriver driver = DriverFactory.getWebDriver()
+		WebUI.setText(findTestObject('Object Repository/Reminder/textarea_reminderSubject'), subject)
+		WebUI.delay(2)
+		WebUI.setText(findTestObject('Object Repository/Reminder/textarea_reminderDetails'),details)
+		WebUI.delay(2)
+		//WebUI.setText(findTestObject('Object Repository/Reminder/input_reminderDuedate'),dueDate)
+
+		WebElement txtDueDate = driver.findElement(By.xpath("//input[@id='txtDueDate']"))
+		((JavascriptExecutor) driver).executeScript("arguments[0].removeAttribute('readonly','readonly')", txtDueDate)
+		WebUI.delay(2)
+
+		txtDueDate.sendKeys(dueDate)
+		txtDueDate.sendKeys(Keys.TAB)
+
+
+
+		WebUI.delay(5)
+		String getReminderDate = WebUI.getAttribute(findTestObject('Object Repository/Reminder/input_reminderDate'), 'value')
+		println getReminderDate
+		WebUI.delay(3)
+		'click the save button'
+		WebUI.click(findTestObject('Object Repository/Reminder/button_reminderSave'))
+		return getReminderDate
+
+	}
+
+	@Keyword
+	def reminderValidation(){
+		WebDriver driver = DriverFactory.getWebDriver()
+		def reminderValidationMessages =[:]
+		WebElement detailFieldValidationMessage = driver.findElement(By.xpath("//*[@id='AddEditReminderModal']/div[2]/div/div[2]/div/div[3]/div/span"))
+		String detailFieldclassName = detailFieldValidationMessage.getAttribute("class")
+
+		WebElement dueDateFieldValidationMessage =driver.findElement(By.xpath("//*[@id='AddEditReminderModal']/div[2]/div/div[2]/div/div[5]/div/span[2]"))
+		String dueDateClassName= dueDateFieldValidationMessage.getAttribute("class")
+
+		WebElement reminderDateFieldValidationMessage = driver.findElement(By.xpath("//*[@id='AddEditReminderModal']/div[2]/div/div[2]/div/div[6]/div/span[2]"))
+		String reminderDateClassName = reminderDateFieldValidationMessage.getAttribute("class")
+
+		if (detailFieldclassName=='help-block'){
+			String validationMessage = 	detailFieldValidationMessage.getText()
+			println validationMessage
+			reminderValidationMessages.put("detailfield", validationMessage)
+		}
+
+		if (dueDateClassName=='help-block'){
+			String validationMessage = 	dueDateFieldValidationMessage.getText()
+			println validationMessage
+			reminderValidationMessages.put("duedate", validationMessage)
+		}
+
+		if (reminderDateClassName=='help-block'){
+			String validationMessage = 	reminderDateFieldValidationMessage.getText()
+			println validationMessage
+			reminderValidationMessages.put("reminderdate", validationMessage)
+
+		}
+		return reminderValidationMessages
+	}
+
+	@Keyword
+	def selectReminder(String subject){
+
+		WebDriver driver = DriverFactory.getWebDriver()
+		WebElement reminderTable = driver.findElement(By.xpath('//*[@id="divReminders"]/div/div[3]/div/table/tbody'))
+		List<WebElement>allreminderRows = reminderTable.findElements(By.tagName('tr'))
+
+		for (int rowCount : (1..allreminderRows.size())){
+
+			String getSubject = driver.findElement(By.xpath("//*[@id='divReminders']/div/div[3]/div/table/tbody/tr[${rowCount}]/td[2]")).getText()
+
+			if(getSubject==subject){
+				return rowCount
+				break
+			}
+		}
+	}
+
+	def getServerDateAndTime(){
+		'connect to the db'
+		CustomKeywords.'com.maxids.SQLConnection.connectDB'(dbServer, port, databaseName, dbUserName, dbUserPassword)
+
+		'query'
+		String dataAndTime = 'select getdate() as date'
+		Date result
+		ResultSet getDateAndTime = CustomKeywords.'com.maxids.SQLConnection.executeQuery'(dataAndTime)
+
+
+		while (getDateAndTime.next()) {
+
+			'get the date and time'
+			result = getDateAndTime.getObject('date')
+			println(result)
+		}
+
+		DateFormat df2 = new SimpleDateFormat("yyyyMMddHHmmss")
+		String dc = df2.format(result)
+		println dc
+	}
+}

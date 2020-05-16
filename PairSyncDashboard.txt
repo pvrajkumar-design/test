@@ -1,0 +1,410 @@
+/*getApplicationNo = excelData.getValue('ApplicationNumber',1)
+getwatchunwatchCount=WebUI.getText(findTestObject('Object Repository/PAIRSync/WatchUnwatchListCount'))
+iWatchlistCount = Integer.parseInt(getwatchunwatchCount)
+println iWatchlistCount*/
+
+
+//List<WebElement> elementList= driver.findElements(By.xpath("//*[@id='list-div-left']/tr[${row}]/td[6]/div/span"));
+//'Storing the elements as obtained list'
+//for(WebElement we:elementList) {
+//	obtainedListPostToggle.add(we.getText());
+//}
+
+
+
+/*for (int row=1 ;row <= iWatchlistCount; row++) {
+ List<WebElement> elementList= driver.findElements(By.xpath("//*[@id='list-div-left']/tr[${row}]/td[6]/div/span"));
+ 'Storing the elements as obtained list'
+ for(WebElement we:elementList) {
+ obtainedListPostSave.add(we.getText());
+ }
+ }
+ return obtainedListPostSave*/
+
+Commit:
+PQ-216 Committing the code for taking the IFW activity values and storing them in Hashmap.
+
+Pull request:
+PQ-182 - Test case id PSF 2.2
+
+maxval, Pilot01!
+
+
+Record ID: 158953
+
+https://docs.google.com/spreadsheets/d/1St9bcqJMGoQPlzqZHwjyw5Jq6Qy45x2dmkYEAjDKLfw/edit?usp=sharing
+
+https://maxids.maxval.com/Idsqa
+
+select top 1 record_no from tbl_record where record_type_id=1 and isactive=1
+50.28.37.247
+Labels and Milestones
+
+//*[@id="s2id_autogen1"]/ul/li[1]/div
+//*[@id="sync-NPL"]
+//*[@id="ddlCitedSource"]
+//*[@id="sync-Source"]
+
+
+tbl_pair_reference
+tbl_private_pair
+
+tbl_pairSync
+tbl_pair_application
+
+
+
+
+
+/*'Verify the success message'
+def actualSuccessMessage = WebUI.getText(findTestObject('PAIR Account Setup Page/toastmessage-Status'))
+assert WebUI.verifyEqual(actualSuccessMessage, alertMessage)
+WebUI.delay(2)*/
+
+
+Crosssite: https://drive.google.com/drive/folders/1yIBBYmuBvKL3k2n9D2EBqFoJnEh7crxj
+
+
+
+
+def addNewPractitionerAccount(String accountType,String practitionerName,String email,String password, String secretKey,String sponsorName, String sponsorRegistrationNo) {
+
+		if(accountType?.trim() && accountType.equals("Sponsor")){
+
+			TestObject setIsSponsored = findTestObject('PAIR Account Setup Page/checkbox-isSponsored')
+			WebUI.waitForElementClickable(setIsSponsored, 10)
+			WebUI.click(setIsSponsored)
+			WebUI.delay(3)
+		}
+		if(practitionerName?.trim()){
+
+			TestObject setPractitionerName = findTestObject('PAIR Account Setup Page/input-Paralegalname')
+			WebUI.clearText(setPractitionerName)
+			WebUI.setText(setPractitionerName, practitionerName)
+			WebUI.delay(1)
+		}
+
+		if(email?.trim()){
+			TestObject setEmail = findTestObject('PAIR Account Setup Page/input-Email')
+			WebUI.clearText(setEmail)
+			WebUI.setText(setEmail, email)
+			WebUI.delay(1)
+		}
+
+		if(password?.trim()){
+			TestObject setPassword = findTestObject('PAIR Account Setup Page/input-Password')
+			WebUI.clearText(setPassword)
+			WebUI.setText(setPassword, password)
+			WebUI.delay(1)
+		}
+
+		if(secretKey?.trim()){
+			TestObject setSecretKey = findTestObject('PAIR Account Setup Page/input-Secretkey')
+			WebUI.clearText(setSecretKey)
+			WebUI.setText(setSecretKey, secretKey)
+			WebUI.delay(1)
+		}
+		if(sponsorName?.trim()){
+			TestObject setSponsorName = findTestObject('PAIR Account Setup Page/input-SponsoredPracName')
+			WebUI.clearText(setSponsorName)
+			WebUI.setText(setSponsorName, sponsorName)
+			WebUI.delay(3)
+		}
+
+		if(sponsorRegistrationNo?.trim()){
+			TestObject setSponsorRegistrationNo = findTestObject('PAIR Account Setup Page/input-SponsorRegNo')
+			WebUI.clearText(setSponsorRegistrationNo)
+			WebUI.setText(setSponsorRegistrationNo, sponsorRegistrationNo)
+			WebUI.delay(3)
+		}
+
+		'Click Add Certificate button'
+		WebUI.click(findTestObject('PAIR Account Setup Page/AddCertificate'))
+		WebUI.delay(1)
+	}
+
+
+
+'Select the account name'
+WebUI.selectOptionByLabel(findTestObject('PAIRSync/dropdownAccountName'),practitionerName,false)
+WebUI.delay(3)
+
+
+'Select the customer number'
+excelData.changeSheet('AddNewSponsor')
+getCustomerNumber = excelData.getValue('CustomerNumber',1)
+println getCustomerNumber
+WebUI.click(findTestObject('PAIRSync/dropdownCustomerNumber'))
+WebUI.selectOptionByLabel(findTestObject('PAIRSync/dropdownCustomerNumber'),getCustomerNumber,false)
+WebUI.delay(3)
+
+'Çlick on Getdetails button'
+WebUI.click(findTestObject('PAIRSync/buttonGetDetails'))
+WebUI.delay(4)
+WebUI.scrollToElement(findTestObject('PAIRSync/dropdownFrequency'), 0)
+
+'Click on save button'
+WebUI.click(findTestObject('PAIRSync/PAIRSyncRecordSave'))
+WebUI.delay(2)
+
+
+'Assert that the saved detail is displayed in PairSync table'
+String assertNameEmail = practitionerName + email
+CustomKeywords.'com.maxids.PairSyncDashboard.isPairSyncDashboardRecordPresent'(practitionerName,email,assertNameEmail)
+
+
+def clickPairSyncSponsorRecord(sponsorName) {
+		WebDriver driver = DriverFactory.getWebDriver()
+		WebElement tblPairSyncAccount = driver.findElement(By.xpath('//div/table//tbody'))
+		List<WebElement> tblRows = tblPairSyncAccount.findElements(By.xpath("./tr"))
+		rows_count = tblRows.size()
+		for (int row = 1; row <= rows_count; row++) {
+			List<WebElement> elementList= driver.findElements(By.xpath("//table/tbody/tr[$row]/td[4]"))
+			for(WebElement we:elementList) {
+				obtainedList.add(we.getText())
+				if(we.getText().equalsIgnoreCase(sponsorName)) {
+					WebElement editRowElement = driver.findElement(By.xpath("//table/tbody/tr[$row]/td[6]"))
+					println editRowElement.isEnabled()
+					if(editRowElement.isEnabled()==true) {
+						editRowElement.click()
+						WebUI.acceptAlert()
+					}
+				}
+				break
+			}
+		}
+	}
+
+
+//Select selectDropdown1 = new Select(driver.findElement(By.xpath("//*[@id='office-action-sync-con']/div/div[2]/div[1]/div/select")))
+					//elementList.click()
+					//Select select = new Select(selectDropdown)
+					
+					//select.selectByVisibleText(excelPairActivity)
+					
+					//selectDropdown1.selectByValue(excelPairActivity)
+
+	//WebUI.selectOptionByLabel(setpairActivities, pairActivities, false)
+			//WebUI.setText(setpairActivities, pairActivities)
+			//WebElement setpairActivities = driver.findElement(By.name("s2id_autogen2"))
+			/*	Select select = new Select(setpairActivities)
+			 select.selectByVisibleText("1449")
+			 select.selectByValue("1449")*/
+
+
+
+//WebUI.sendKeys(findTestObject('PAIR Account Setup Page/input-PAIRActivities'),Keys.chord(Keys.TAB))
+			//WebUI.sendKeys(findTestObject('PAIR Account Setup Page/pa1'),Keys.chord(Keys.TAB))
+			
+			//WebElement ePADD= driver.findElement(By.xpath("//*[@id='office-action-sync-con']/div/div[2]/div[1]/div"))
+			
+			//WebElement ePADD= driver.findElement(By.xpath("//*[@id='s2id_autogen1']/ul/li[2]/a"))
+			//ePADD.click()
+			
+			
+			
+		/*	Actions actions = new Actions(driver)
+			WebElement elementLocator = driver.findElement(By.xpath("//*[@id='office-action-sync-con']/div/div[2]/div[1]/div"))
+			actions.doubleClick(elementLocator).perform()*/
+
+
+
+Selenium 4:
+
+1. Webdriver became W3C.
+2. Improved selnium Grid.
+3. Support for browsers.
+4. New selenium IDE.
+5. Detailed documentation.
+6. Better analysis.
+
+
+a. Scenario to update the IFW pair tab count for specific watchlist item.
+
+Go to PAIR Sync dashboard page.
+
+Navigate to specific sponsor account to get the Item list details.
+
+For specific watch list item, set the frequency manually and update the IFW Pair tab data count by adding new entries in the data table.
+
+Once the frequency updates are done,navigate to PAIR tab section in detailed view of the watch list item.
+
+Assert that the Pair tab count matches with the data from database once the frequency update is done.
+
+b. Scenario to delete the IFW pair tab count for specific watchlist item.
+
+Go to PAIR Sync dashboard page.
+
+Navigate to specific sponsor account to get the Item list details.
+
+For specific watch list item, set the frequency manually and update the IFW Pair tab data count by deleting  entries in the data table.
+
+Once the frequency updates are done,navigate to PAIR tab section in detailed view of the watch list item.
+
+Assert that the Pair tab count matches with the data from database once the frequency update is done.
+
+c. Scenario to update the IFW pair tab details instead of count for specific watchlist item.
+
+Go to PAIR Sync dashboard page.
+
+Navigate to specific sponsor account to get the Item list details.
+
+For specific watch list item, set the frequency manually and update the existing IFW Pair tab data entries in the data table.
+
+Execute the frequency updates ,navigate to PAIR tab section in detailed view of the watch list item.
+
+Assert that the Pair tab count matches with the data from database once the frequency update is done.
+
+		
+
+def watchListSelector(watchlistRecord) {
+
+		WebDriver driver = DriverFactory.getWebDriver()
+		for (row = 1; row <= watchlistCount; row++)
+			
+		{
+			WebElement elementClick = driver.findElement(By.xpath("//*[@id='list-div-left']/tr[$row]/td[6]/div/label/span"))
+			elementClick.click()
+			println row
+			println watchlistCount
+			List<WebElement> elementList= driver.findElements(By.xpath("//*[@id='list-div-left']/tr[$row]/td[1]"))
+			'Storing the elements as obtained list'
+			for(WebElement recordListElement:elementList) {
+				recordList.add(recordListElement.getText())
+				return recordList
+			}
+
+		}
+	}
+
+
+/*Map<Integer,String> map=new HashMap<Integer,String>()
+				map.put(100,we.getText())
+				map.put(101,we.getText())
+				map.put(102,we.getText())
+				//Elements can traverse in any order
+				for(Map.Entry m1:map.entrySet()){
+				 println m1.getValue()
+				}*/
+
+
+
+/*def pairTabDateList(pairtab_count_after) {
+	 table1 = driver.findElement(By.xpath('//*[@id="Pair"]/ng-form/div/div[1]/table/tbody'))
+	 rows1 = table1.findElements(By.xpath("./tr"))
+	 rows_count1 = rows1.size()
+	 for (row = 1; row <= rows_count1; row++) {
+	 List<WebElement> dateElementList= driver.findElements(By.xpath("//*[@id='Pair']/ng-form/div/div[1]/table/tbody/tr[$row]/td[4]"))
+	 for(WebElement we:dateElementList) {
+	 dateList.add(we.getText())
+	 }
+	 }
+	 return dateList
+	 }
+	 def pairTabDescriptionList(pairtab_count_after) {
+	 table1 = driver.findElement(By.xpath('//*[@id="Pair"]/ng-form/div/div[1]/table/tbody'))
+	 rows1 = table1.findElements(By.xpath("./tr"))
+	 rows_count1 = rows1.size()
+	 for (row = 1; row <= rows_count1; row++) {
+	 List<WebElement> descriptionElementList= driver.findElements(By.xpath("//*[@id='Pair']/ng-form/div/div[1]/table/tbody/tr[$row]/td[5]"))
+	 for(WebElement we:descriptionElementList) {
+	 descriptionList.add(we.getText())
+	 }
+	 }
+	 return descriptionList
+	 }
+	 def pairTabCodeList(pairtab_count_after) {
+	 table1 = driver.findElement(By.xpath('//*[@id="Pair"]/ng-form/div/div[1]/table/tbody'))
+	 rows1 = table1.findElements(By.xpath("./tr"))
+	 rows_count1 = rows1.size()
+	 for (row = 1; row <= rows_count1; row++) {
+	 List<WebElement> codeElementList= driver.findElements(By.xpath("//*[@id='Pair']/ng-form/div/div[1]/table/tbody/tr[$row]/td[6]"))
+	 for(WebElement we:codeElementList) {
+	 codeList.add(we.getText())
+	 }
+	 }
+	 return codeList
+	 }
+	 def pairTabPageCountList(pairtab_count_after) {
+	 table1 = driver.findElement(By.xpath('//*[@id="Pair"]/ng-form/div/div[1]/table/tbody'))
+	 rows1 = table1.findElements(By.xpath("./tr"))
+	 rows_count1 = rows1.size()
+	 for (row = 1; row <= rows_count1; row++) {
+	 List<WebElement> pagecountElementList= driver.findElements(By.xpath("//*[@id='Pair']/ng-form/div/div[1]/table/tbody/tr[$row]/td[7]"))
+	 for(WebElement we:pagecountElementList) {
+	 pagecountList.add(we.getText())
+	 }
+	 }
+	 return pagecountList
+	 }*/
+
+
+
+==============
+	/*WebElement  descriptionElement= driver.findElement(By.xpath("//*[@id='Pair']/ng-form/div/div[1]/table/tbody/tr[$row]/td[5]"))
+			
+			 for(WebElement we:descriptionElement) {
+			 pagecountList.add(we.getText())
+			 objDescMap = new HashMap<String, String>()
+			 objDescMap.put("Description"+row, descriptionElement.getText())
+			 println objDescMap
+			 
+			}
+			 
+			 WebElement  codeElement= driver.findElement(By.xpath("//*[@id='Pair']/ng-form/div/div[1]/table/tbody/tr[$row]/td[6]"))
+			  
+			  for(WebElement we:codeElement) {
+			  pagecountList.add(we.getText())
+			  objCodeMap = new HashMap<String, String>()
+			  objCodeMap.put("Code"+row, codeElement.getText())
+			  println objCodeMap
+			  
+			  }
+		  
+			  WebElement  pageCountElement= driver.findElement(By.xpath("//*[@id='Pair']/ng-form/div/div[1]/table/tbody/tr[$row]/td[7]"))
+			   for(WebElement we:pageCountElement) {
+			   pagecountList.add(we.getText())
+			   objPgCountMap = new HashMap<String, String>()
+			   objPgCountMap.put("PageCount"+row, pageCountElement.getText())
+			   println objPgCountMap
+		   
+			   }
+		   
+			   WebElement  statusElement= driver.findElement(By.xpath("//*[@id='Pair']/ng-form/div/div[1]/table/tbody/tr[$row]/td[8]"))
+			
+				for(WebElement we:statusElement) {
+				pagecountList.add(we.getText())
+				objStatusMap = new HashMap<String, String>()
+				objStatusMap.put("Status"+row, statusElement.getText())
+				println objStatusMap*/
+			
+				
+//		   return objDateMap
+//		   return objDescMap
+//		   return objCodeMap
+//		   return objStatusMap
+//		   return objPgCountMap
+================
+
+
+/*'Get the practitioner account dropdown count'
+WebDriver driver = DriverFactory.getWebDriver()
+WebElement dropdownAccountName = driver.findElement(By.xpath('//*[@id="CertificateDropdown"]'))
+List<WebElement> totalRows = dropdownAccountName.findElements(By.xpath("./option"))
+int totalRowsCount=totalRows.size()
+println totalRowsCount
+Select selectDropdown = new Select(driver.findElement(By.xpath('//*[@id="CertificateDropdown"]')))
+List<WebElement> listOptionDropdown = selectDropdown.getOptions()
+int dropdownCount = listOptionDropdown.size()
+println dropdownCount*/
+
+
+===================
+select * from tbl_pair_certificate
+select * from tbl_pair_customerno
+select * from tbl_pair_application
+select * from tbl_pairsync
+select * from tbl_private_pair
+select * from tbl_pair_references
+
+===================

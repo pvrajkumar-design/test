@@ -1,0 +1,608 @@
+package com.maxids
+
+import static com.kms.katalon.core.checkpoint.CheckpointFactory.findCheckpoint
+import static com.kms.katalon.core.testcase.TestCaseFactory.findTestCase
+import static com.kms.katalon.core.testdata.TestDataFactory.findTestData
+import static com.kms.katalon.core.testobject.ObjectRepository.findTestObject
+
+import com.kms.katalon.core.annotation.Keyword
+import com.kms.katalon.core.checkpoint.Checkpoint
+import com.kms.katalon.core.checkpoint.CheckpointFactory
+import com.kms.katalon.core.mobile.keyword.MobileBuiltInKeywords
+import com.kms.katalon.core.model.FailureHandling
+import com.kms.katalon.core.testcase.TestCase
+import com.kms.katalon.core.testcase.TestCaseFactory
+import com.kms.katalon.core.testdata.TestData
+import com.kms.katalon.core.testdata.TestDataFactory
+import com.kms.katalon.core.testobject.ObjectRepository
+import com.kms.katalon.core.testobject.TestObject
+import com.kms.katalon.core.webservice.keyword.WSBuiltInKeywords
+import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords
+import com.kms.katalon.core.webui.common.WebUiCommonHelper
+
+import internal.GlobalVariable
+
+import MobileBuiltInKeywords as Mobile
+import WSBuiltInKeywords as WS
+import WebUiBuiltInKeywords as WebUI
+
+import org.openqa.selenium.WebElement
+import org.openqa.selenium.support.ui.Select
+import org.openqa.selenium.WebDriver
+import org.openqa.selenium.By
+
+import com.kms.katalon.core.mobile.keyword.internal.MobileDriverFactory
+import com.kms.katalon.core.webui.driver.DriverFactory
+
+import com.kms.katalon.core.testobject.RequestObject
+import com.kms.katalon.core.testobject.ResponseObject
+import com.kms.katalon.core.testobject.ConditionType
+import com.kms.katalon.core.testobject.TestObjectProperty
+
+import com.kms.katalon.core.mobile.helper.MobileElementCommonHelper
+import com.kms.katalon.core.util.KeywordUtil
+
+import com.kms.katalon.core.webui.exception.WebElementNotFoundException
+
+class IDSRecordManagement {
+	WebDriver driver = DriverFactory.getWebDriver()
+
+
+	@Keyword
+	def getExistingBiblioDetailsUS(){
+		def actualBiblioDetails = [:]
+
+		String title = WebUI.getAttribute(findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_Title'),'value')
+		actualBiblioDetails.put("title", title)
+
+		String url = WebUI.getAttribute(findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_URL'),'value')
+		actualBiblioDetails.put("url", url)
+
+		String docketNo = WebUI.getAttribute(findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_DocketNo'),'value')
+		actualBiblioDetails.put("docketno", docketNo)
+
+		String serialNo = WebUI.getAttribute(findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_SerialNo'),'value')
+		actualBiblioDetails.put("serialno", serialNo)
+
+		String filingDate = WebUI.getAttribute(findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_FilingDate'),'value')
+		actualBiblioDetails.put("filingdate", filingDate)
+
+		String patentNo =WebUI.getAttribute(findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_PatentNo'),'value')
+		actualBiblioDetails.put("patentno", patentNo)
+
+		String issueDate = WebUI.getAttribute(findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_IssueDate'),'value')
+		actualBiblioDetails.put("issuedate", issueDate)
+
+		String pubNo = WebUI.getAttribute(findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_PubNo'),'value')
+		actualBiblioDetails.put("pubno", pubNo)
+
+		String pubDate =WebUI.getAttribute(findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_PubDate'),'value')
+		actualBiblioDetails.put("pubdate", pubDate)
+
+
+		Select select = new Select(driver.findElement(By.xpath("//select[@id='ddlStatus']")));
+		WebElement option = select.getFirstSelectedOption();
+		String defaultItem = option.getText();
+		println defaultItem
+		actualBiblioDetails.put("recordstatus", defaultItem)
+
+
+
+
+		String idsSerialNo = WebUI.getAttribute(findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_IDSSerialNo'),'value')
+		actualBiblioDetails.put("idsserialno", idsSerialNo)
+
+		String priorityNo = WebUI.getAttribute(findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_PriorityNo'),'value')
+		actualBiblioDetails.put("priorityno", priorityNo)
+
+		String priorityDate = WebUI.getAttribute(findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_PriorityDate'),'value')
+		actualBiblioDetails.put("prioritydate", priorityDate)
+
+		String attorneyList = WebUI.getText(findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/select_attorneyList'))
+		actualBiblioDetails.put("attorneylist", attorneyList)
+
+		String assingeeList = WebUI.getText(findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/select_assigneeList'))
+		actualBiblioDetails.put("assigneelist", assingeeList)
+
+
+		String inventorList = WebUI.getText(findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/select_InventorList'))
+		actualBiblioDetails.put("inventorlist", inventorList)
+		println actualBiblioDetails
+
+		return actualBiblioDetails
+	}
+
+	@Keyword
+	def toFillBiblioDetailsUS(String title,String url,String docketNo,String serialNo,String filingDate, String patentNo, String issueDate,String pubNo, String pubDate,String idsSerialNo,String priorityNo,
+			String prioriyDate, String attorney, String assignee, String inventors,String usc, String ipc, String continuityData, String confirmationNo, String artUnit,
+			String technology, String examiner, String lawfirmRefNo){
+
+		if (title?.trim()){
+			TestObject setTitle = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_Title')
+			WebUI.clearText(setTitle)
+			WebUI.setText(setTitle, title)
+			WebUI.delay(1)
+		}
+
+		if(url?.trim()){
+
+			TestObject setURL = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_URL')
+			WebUI.clearText(setURL)
+			WebUI.setText(setURL, url)
+			WebUI.delay(1)
+		}
+		if (docketNo?.trim()){
+			TestObject setDocketNo = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_DocketNo')
+			WebUI.clearText(setDocketNo)
+			WebUI.setText(setDocketNo, docketNo)
+			WebUI.delay(1)
+		}
+		if(serialNo?.trim()){
+			TestObject setSerialNo = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_SerialNo')
+			WebUI.clearText(setSerialNo)
+			WebUI.setText(setSerialNo, serialNo)
+			WebUI.delay(1)
+		}
+
+		if(filingDate?.trim()){
+
+			TestObject setFilingDate = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_FilingDate')
+			WebUI.clearText(setFilingDate)
+			WebUI.setText(setFilingDate, filingDate)
+			WebUI.delay(1)
+		}
+
+		if(patentNo?.trim()){
+			TestObject setPatentNo = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_PatentNo')
+			WebUI.clearText(setPatentNo)
+			WebUI.setText(setPatentNo, patentNo)
+			WebUI.delay(1)
+		}
+
+		if(issueDate?.trim()){
+			TestObject setIssueDate = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_IssueDate')
+			WebUI.clearText(setIssueDate)
+			WebUI.setText(setIssueDate, issueDate)
+			WebUI.delay(1)
+		}
+
+
+
+		if(pubNo?.trim()){
+
+			TestObject setPubNo = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_PubNo')
+			WebUI.clearText(setPubNo)
+			WebUI.setText(setPubNo, pubNo)
+			WebUI.delay(1)
+		}
+
+		if(pubDate?.trim()){
+
+			TestObject setPubDate = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_PubDate')
+			WebUI.clearText(setPubDate)
+			WebUI.setText(setPubDate, pubDate)
+			WebUI.delay(1)
+		}
+		if(idsSerialNo?.trim()){
+
+			TestObject setIdsSerialNo = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_IDSSerialNo')
+			WebUI.clearText(setIdsSerialNo)
+			WebUI.setText(setIdsSerialNo, idsSerialNo)
+			WebUI.delay(1)
+		}
+		if(priorityNo?.trim()){
+
+			TestObject setPriorityNo = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_PriorityNo')
+			WebUI.clearText(setPriorityNo)
+			WebUI.setText(setPriorityNo, priorityNo)
+			WebUI.delay(1)
+		}
+		if(prioriyDate?.trim()){
+
+			TestObject setPriorityDate = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_PriorityDate')
+			WebUI.clearText(setPriorityDate)
+			WebUI.setText(setPriorityDate, prioriyDate)
+			WebUI.delay(1)
+		}
+		if(attorney?.trim()){
+
+
+			TestObject setAttorney = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_Attorney')
+			WebUI.clearText(setAttorney)
+			WebUI.setText(setAttorney, attorney)
+			WebUI.delay(1)
+			TestObject addAttorneys = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/button_addAttorney')
+			WebUI.click(addAttorneys)
+			WebUI.delay(2)
+		}
+		if(assignee?.trim()){
+
+			TestObject setAssignee = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_Assignee')
+			WebUI.clearText(setAssignee)
+			WebUI.setText(setAssignee, assignee)
+			WebUI.delay(1)
+			TestObject addAssignees = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/button_addAssignee')
+			WebUI.click(addAssignees)
+			WebUI.delay(2)
+		}
+		if(inventors?.trim()){
+
+			TestObject setInventor = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_Inventors')
+			WebUI.clearText(setInventor)
+			WebUI.setText(setInventor, inventors)
+			WebUI.delay(1)
+			TestObject addInventors = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/button_addInventor')
+			WebUI.click(addInventors)
+			WebUI.delay(2)
+		}
+		if(usc?.trim()){
+
+			TestObject setUSC = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_USC')
+			WebUI.clearText(setUSC)
+			WebUI.setText(setUSC, usc)
+			WebUI.delay(1)
+		}
+		if(ipc?.trim()){
+
+			TestObject setIPC = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_IPC')
+			WebUI.clearText(setIPC)
+			WebUI.setText(setIPC, ipc)
+			WebUI.delay(1)
+		}
+		if(continuityData?.trim()) {
+			TestObject setContinuityData = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_ContinuityData')
+			WebUI.clearText(setContinuityData)
+			WebUI.setText(setContinuityData, continuityData)
+			WebUI.delay(1)
+		}
+		if(confirmationNo?.trim()){
+			TestObject setConfirmationNo = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_confirmationNo')
+			WebUI.clearText(setConfirmationNo)
+			WebUI.setText(setConfirmationNo, confirmationNo)
+			WebUI.delay(1)
+		}
+		if(artUnit?.trim()){
+			TestObject setArtUnit = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_ArtUnit')
+			WebUI.clearText(setArtUnit)
+			WebUI.setText(setArtUnit, artUnit)
+			WebUI.delay(1)
+		}
+		if(technology?.trim()){
+			TestObject setTechnology = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_Technology')
+			WebUI.clearText(setTechnology)
+			WebUI.setText(setTechnology, technology)
+			WebUI.delay(1)
+		}
+		if(examiner?.trim()){
+			TestObject setExaminer = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_Examiner')
+			WebUI.clearText(setExaminer)
+			WebUI.setText(setExaminer, examiner)
+			WebUI.delay(1)
+		}
+		if(lawfirmRefNo?.trim()){
+
+			TestObject setLawfirmRefNo = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_LawFirm')
+			WebUI.clearText(setLawfirmRefNo)
+			WebUI.setText(setLawfirmRefNo, lawfirmRefNo)
+			WebUI.delay(1)
+		}
+	}
+
+
+	@Keyword
+	def getExistingBiblioDetailsNPL(){
+		def actualBiblioDetailsNpl = [:]
+
+		String recType = WebUI.getAttribute(findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/select_RecordType'),'value')
+		actualBiblioDetailsNpl.put("recordtype",recType)
+
+		String title = WebUI.getAttribute(findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_Title'),'value')
+		actualBiblioDetailsNpl.put("title", title)
+
+		String url = WebUI.getAttribute(findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_URL'),'value')
+		actualBiblioDetailsNpl.put("url", url)
+
+		String citation = WebUI.getText(findTestObject('AddRecord/Page_Max-IDS - 4.3.7011.72/citationeditor'))
+		actualBiblioDetailsNpl.put("citation", citation)
+
+
+		String journal = WebUI.getAttribute(findTestObject('RecordManagement/NPL/Page_Max-IDS - 4.3.7062.737/input_NPLJournal'),'value')
+		actualBiblioDetailsNpl.put("journal", journal)
+
+		String author = WebUI.getAttribute(findTestObject('RecordManagement/NPL/Page_Max-IDS - 4.3.7062.737/input_NPLAuthor'),'value')
+		actualBiblioDetailsNpl.put("author", author)
+
+		String publisher =WebUI.getAttribute(findTestObject('Object Repository/RecordManagement/NPL/Page_Max-IDS - 4.3.7062.737/input_NPLPublisher'),'value')
+		actualBiblioDetailsNpl.put("publisher", publisher)
+
+		String nplPubDate = WebUI.getAttribute(findTestObject('Object Repository/RecordManagement/NPL/Page_Max-IDS - 4.3.7062.737/input_NPLPubDate'),'value')
+		actualBiblioDetailsNpl.put("nplpubdate", nplPubDate)
+
+		String pageNo = WebUI.getAttribute(findTestObject('Object Repository/RecordManagement/NPL/Page_Max-IDS - 4.3.7062.737/input_NPLPageNo'),'value')
+		actualBiblioDetailsNpl.put("pageno", pageNo)
+
+		String volIssue =WebUI.getAttribute(findTestObject('Object Repository/RecordManagement/NPL/Page_Max-IDS - 4.3.7062.737/input_NPLVolIssue'),'value')
+		actualBiblioDetailsNpl.put("volissue", volIssue)
+
+		println actualBiblioDetailsNpl
+
+		return actualBiblioDetailsNpl
+	}
+
+
+	@Keyword
+	def toFillBiblioDetailsNPL(String title,String url,String citation,String journal,String author, String publisher, String nplPubDate,String pageNo,String volIssue){
+
+		if(title?.trim()){
+
+			TestObject setTitle = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_Title')
+			WebUI.clearText(setTitle)
+			WebUI.setText(setTitle, title)
+			WebUI.delay(1)
+		}
+
+		if(url?.trim()){
+			TestObject setURL = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_URL')
+			WebUI.clearText(setURL)
+			WebUI.setText(setURL, url)
+			WebUI.delay(1)
+		}
+		if(citation?.trim()){
+			TestObject setCitation = findTestObject('AddRecord/Page_Max-IDS - 4.3.7011.72/citationeditor')
+			WebUI.clearText(setCitation)
+			WebUI.setText(setCitation, citation)
+			WebUI.delay(1)
+		}
+
+
+		if(journal?.trim()){
+			TestObject setJournal = findTestObject('RecordManagement/NPL/Page_Max-IDS - 4.3.7062.737/input_NPLJournal')
+			WebUI.clearText(setJournal)
+			WebUI.setText(setJournal, journal)
+			WebUI.delay(1)
+		}
+
+		if(author?.trim()){
+			TestObject setAuthor = findTestObject('RecordManagement/NPL/Page_Max-IDS - 4.3.7062.737/input_NPLAuthor')
+			WebUI.clearText(setAuthor)
+			WebUI.setText(setAuthor, author)
+			WebUI.delay(1)
+		}
+
+		if(publisher?.trim()){
+			TestObject setPublisher = findTestObject('Object Repository/RecordManagement/NPL/Page_Max-IDS - 4.3.7062.737/input_NPLPublisher')
+			WebUI.clearText(setPublisher)
+			WebUI.setText(setPublisher, publisher)
+			WebUI.delay(1)
+		}
+		if(nplPubDate?.trim()){
+			TestObject setNplPubDate = findTestObject('Object Repository/RecordManagement/NPL/Page_Max-IDS - 4.3.7062.737/input_NPLPubDate')
+			WebUI.clearText(setNplPubDate)
+			WebUI.setText(setNplPubDate, nplPubDate)
+			WebUI.delay(1)
+		}
+
+		if(pageNo?.trim()){
+
+			TestObject setPageNo = findTestObject('Object Repository/RecordManagement/NPL/Page_Max-IDS - 4.3.7062.737/input_NPLPageNo')
+			WebUI.clearText(setPageNo)
+			WebUI.setText(setPageNo, pageNo)
+			WebUI.delay(1)
+		}
+
+		if(volIssue?.trim()){
+
+			TestObject setVolIssue = findTestObject('Object Repository/RecordManagement/NPL/Page_Max-IDS - 4.3.7062.737/input_NPLVolIssue')
+			WebUI.clearText(setVolIssue)
+			WebUI.setText(setVolIssue, volIssue)
+			WebUI.delay(1)
+		}
+	}
+
+
+	@Keyword
+	def toFillDetailsTabValueUSA(String keywords,String abstracts,String fullText,String claims){
+
+		if(keywords?.trim()){
+
+			TestObject setKeyword = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_Keywords')
+			WebUI.clearText(setKeyword)
+			WebUI.setText(setKeyword, keywords)
+			WebUI.delay(1)
+		}
+
+		if(abstracts?.trim()){
+			TestObject setAbstract = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/textarea_abstract')
+			WebUI.clearText(setAbstract)
+			WebUI.setText(setAbstract, abstracts)
+			WebUI.delay(1)
+		}
+		if(fullText?.trim()){
+			TestObject setFullText = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/textarea_Fulltext')
+			WebUI.clearText(setFullText)
+			WebUI.setText(setFullText, fullText)
+			WebUI.delay(1)
+		}
+
+
+		if(claims?.trim()){
+			TestObject setClaims = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/textarea_Claims')
+			WebUI.clearText(setClaims)
+			WebUI.setText(setClaims, claims)
+			WebUI.delay(1)
+		}
+	}
+
+
+	@Keyword
+	def toGetDetailsTabValueUSA(){
+
+		def actualBiblioDetailsTabUSA= [:]
+		String keyword = WebUI.getAttribute(findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_Keywords'),'value')
+		actualBiblioDetailsTabUSA.put("keyword", keyword)
+
+		String abstracts = WebUI.getAttribute(findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/textarea_abstract'),'value')
+		actualBiblioDetailsTabUSA.put("abstract", abstracts)
+
+		String fullText = WebUI.getAttribute(findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/textarea_Fulltext'),'value')
+		actualBiblioDetailsTabUSA.put("fulltext", fullText)
+
+		String claims = WebUI.getAttribute(findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/textarea_Claims'),'value')
+		actualBiblioDetailsTabUSA.put("claims", claims)
+
+		println actualBiblioDetailsTabUSA
+
+		return actualBiblioDetailsTabUSA
+	}
+
+	@Keyword
+	def toFillDetailsTabValueNPL(String keywords,String abstracts,String fullText){
+
+		if(keywords?.trim()){
+
+			TestObject setKeyword = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_Keywords')
+			WebUI.clearText(setKeyword)
+			WebUI.setText(setKeyword, keywords)
+			WebUI.delay(1)
+		}
+
+		if(abstracts?.trim()){
+			TestObject setAbstract = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/textarea_abstract')
+			WebUI.clearText(setAbstract)
+			WebUI.setText(setAbstract, abstracts)
+			WebUI.delay(1)
+		}
+		if(fullText?.trim()){
+			TestObject setFullText = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/textarea_Fulltext')
+			WebUI.clearText(setFullText)
+			WebUI.setText(setFullText, fullText)
+			WebUI.delay(1)
+		}
+	}
+
+	@Keyword
+	def toGetDetailsTabValueNPL(){
+
+		def actualBiblioDetailsTabNPL= [:]
+		String keyword = WebUI.getAttribute(findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_Keywords'),'value')
+		actualBiblioDetailsTabNPL.put("keyword", keyword)
+
+		String abstracts = WebUI.getAttribute(findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/textarea_abstract'),'value')
+		actualBiblioDetailsTabNPL.put("abstract", abstracts)
+
+		String fullText = WebUI.getAttribute(findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/textarea_Fulltext'),'value')
+		actualBiblioDetailsTabNPL.put("fulltext", fullText)
+
+
+		println actualBiblioDetailsTabNPL
+
+		return actualBiblioDetailsTabNPL
+	}
+
+
+
+	@Keyword
+	def addNewRecordUSandFR(String title,String countryCode,String url,String docketNo,String serialNo,String filingDate, String patentNo, String issueDate,String pubNo, String pubDate){
+
+
+		if (title?.trim()){
+			TestObject setTitle = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_Title')
+			WebUI.clearText(setTitle)
+			WebUI.setText(setTitle, title)
+			WebUI.delay(1)
+		}
+
+
+		if (countryCode?.trim()){
+			WebUI.selectOptionByLabel(findTestObject('Object Repository/AddRecord/Page_Max-IDS - 4.3.7011.72/dropdownCountrycode'),
+					countryCode, false)
+			WebUI.delay(1)
+		}
+
+
+		if(url?.trim()){
+
+			TestObject setURL = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_URL')
+			WebUI.clearText(setURL)
+			WebUI.setText(setURL, url)
+			WebUI.delay(1)
+		}
+		if (docketNo?.trim()){
+			TestObject setDocketNo = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_DocketNo')
+			WebUI.clearText(setDocketNo)
+			WebUI.setText(setDocketNo, docketNo)
+			WebUI.delay(1)
+		}
+		if(serialNo?.trim()){
+			TestObject setSerialNo = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_SerialNo')
+			WebUI.clearText(setSerialNo)
+			WebUI.setText(setSerialNo, serialNo)
+			WebUI.delay(1)
+		}
+
+		if(filingDate?.trim()){
+
+			TestObject setFilingDate = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_FilingDate')
+			WebUI.clearText(setFilingDate)
+			WebUI.setText(setFilingDate, filingDate)
+			WebUI.delay(1)
+		}
+
+		if(patentNo?.trim()){
+			TestObject setPatentNo = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_PatentNo')
+			WebUI.clearText(setPatentNo)
+			WebUI.setText(setPatentNo, patentNo)
+			WebUI.delay(1)
+		}
+
+		if(issueDate?.trim()){
+			TestObject setIssueDate = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_IssueDate')
+			WebUI.clearText(setIssueDate)
+			WebUI.setText(setIssueDate, issueDate)
+			WebUI.delay(1)
+		}
+
+
+		if(pubNo?.trim()){
+
+			TestObject setPubNo = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_PubNo')
+			WebUI.clearText(setPubNo)
+			WebUI.setText(setPubNo, pubNo)
+			WebUI.delay(1)
+		}
+
+		if(pubDate?.trim()){
+
+			TestObject setPubDate = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_PubDate')
+			WebUI.clearText(setPubDate)
+			WebUI.setText(setPubDate, pubDate)
+			WebUI.delay(1)
+		}
+	}
+
+
+	@Keyword
+	def addNewRecordNPL(String title,String url,String citation){
+
+		if(title?.trim()){
+
+			TestObject setTitle = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_Title')
+			WebUI.clearText(setTitle)
+			WebUI.setText(setTitle, title)
+			WebUI.delay(1)
+		}
+
+		if(url?.trim()){
+			TestObject setURL = findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/input_URL')
+			WebUI.clearText(setURL)
+			WebUI.setText(setURL, url)
+			WebUI.delay(1)
+		}
+		if(citation?.trim()){
+			TestObject setCitation = findTestObject('AddRecord/Page_Max-IDS - 4.3.7011.72/citationeditor')
+			WebUI.clearText(setCitation)
+			WebUI.setText(setCitation, citation)
+			WebUI.delay(1)
+		}
+	}
+}

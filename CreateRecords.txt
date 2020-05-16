@@ -1,0 +1,219 @@
+import static com.kms.katalon.core.testdata.TestDataFactory.findTestData
+import static com.kms.katalon.core.testobject.ObjectRepository.findTestObject
+
+import org.openqa.selenium.By as By
+import org.openqa.selenium.WebDriver as WebDriver
+import org.openqa.selenium.WebElement as WebElement
+
+import com.kms.katalon.core.testdata.TestData as TestData
+import com.kms.katalon.core.webui.driver.DriverFactory as DriverFactory
+import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
+
+TestData data = findTestData('Record Management')
+data.changeSheet('Add record')
+ //Data for US Application
+recordTypeUSA = data.getValue('Record Type', 1)
+titleUSA = data.getValue('Title',1)
+appUrlUSA = data.getValue('URL',1)
+serialNoUSA = data.getValue('Serial No',1)
+filingDateUSA = data.getValue('Filing Date',1)
+pubNoUSA = data.getValue('Pub No',1)
+pubDateUSA = data.getValue('Pub Date',1)
+expectedStatusUSA = data.getValue('Expected Record Status',1)
+expectedSuccessMessage = data.getValue('Success Message',1)
+
+//Data for US Patent
+recordTypeUP = data.getValue('Record Type', 2)
+titleUP = data.getValue('Title',2)
+appUrlUP = data.getValue('URL',2)
+serialNoUP = data.getValue('Serial No',2)
+filingDateUP = data.getValue('Filing Date',2)
+patentNoUP =data.getValue('Patent No',2)
+issueDateUP =data.getValue('Issue Date',2)
+pubNoUP = data.getValue('Pub No',2)
+pubDateUP = data.getValue('Pub Date',2)
+expectedStatusUP = data.getValue('Expected Record Status',2)
+
+
+//Data for Foreign
+recordTypeFR = data.getValue('Record Type', 3)
+titleFR = data.getValue('Title',3)
+countryCodeFR = data.getValue('Country Code',3)
+appUrlFR = data.getValue('URL',3)
+serialNoFR = data.getValue('Serial No',3)
+filingDateFR = data.getValue('Filing Date',3)
+patentNoFR = data.getValue('Patent No',3)
+issueDateFR = data.getValue('Issue Date',3)
+pubNoFR = data.getValue('Pub No',3)
+pubDateFR = data.getValue('Pub Date',3)
+expectedStatusFR = data.getValue('Expected Record Status',3)
+
+
+//Data for Journal
+recordTypeJR = data.getValue('Record Type', 4)
+titleJR = data.getValue('Title',4)
+appUrlJR = data.getValue('URL',4)
+citationJR = data.getValue('Citation',4)
+
+
+//Data for Others
+recordTypeOT = data.getValue('Record Type', 5)
+titleOT = data.getValue('Title',5)
+appUrlOT = data.getValue('URL',5)
+citationOT = data.getValue('Citation',5)
+
+ 
+
+String url = Baseurl + Clientname
+
+'Navigate to the application url'
+CustomKeywords.'com.maxids.CustomFunctions.navigateToLogin'(Baseurl, Clientname)
+'Login into the application'
+CustomKeywords.'com.maxids.CustomFunctions.login'(Username, Password)
+
+
+dashboardlabel = WebUI.getText(findTestObject('Object Repository/Dashboard/div_DashboardBreadCrumb'))
+
+
+WebUI.delay(4)
+
+'move add/edit record page '
+WebUI.navigateToUrl(url+'EditRecord/Index')
+
+WebUI.delay(5)
+
+'Changing the Record Type'
+WebUI.selectOptionByLabel(findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/select_RecordType'),
+	recordTypeUSA, false)
+
+
+CustomKeywords.'com.maxids.IDSRecordManagement.addNewRecordUSandFR'(titleUSA, "",appUrlUSA, "", serialNoUSA, filingDateUSA, "","", pubNoUSA, pubDateUSA)
+
+WebUI.click(findTestObject('Object Repository/AddRecord/Page_Max-IDS - 4.3.7011.72/button_Save'))
+
+WebUI.delay(5)
+
+
+'Assign to group'
+CustomKeywords.'com.maxids.CustomFunctions.assignGroupUserAndRecord'('1','addRecord')
+
+WebUI.delay(6)
+
+'submit the record'
+WebUI.click(findTestObject('Object Repository/AddRecord/Page_Max-IDS - 4.3.7011.72/button_finalSave'))
+WebUI.delay(10)
+
+
+//*********Create US Patent record
+
+
+'move add/edit record page '
+WebUI.navigateToUrl(url+'EditRecord/Index')
+
+WebUI.delay(5)
+
+'Changing the Record Type'
+WebUI.selectOptionByLabel(findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/select_RecordType'),
+	recordTypeUP, false)
+
+CustomKeywords.'com.maxids.IDSRecordManagement.addNewRecordUSandFR'(titleUP,"", appUrlUP, "", serialNoUP, filingDateUP, patentNoUP,issueDateUP, pubNoUP, pubDateUP)
+
+WebUI.click(findTestObject('Object Repository/AddRecord/Page_Max-IDS - 4.3.7011.72/button_Save'))
+
+WebUI.delay(5)
+
+
+'Assign to group'
+CustomKeywords.'com.maxids.CustomFunctions.assignGroupUserAndRecord'('1','addRecord')
+
+WebUI.delay(4)
+
+'submit the record'
+WebUI.click(findTestObject('Object Repository/AddRecord/Page_Max-IDS - 4.3.7011.72/button_finalSave'))
+WebUI.delay(10)
+
+
+//*********Create Foreign Record
+
+'move add/edit record page '
+WebUI.navigateToUrl(url+'EditRecord/Index')
+
+WebUI.delay(5)
+
+'Changing the Record Type'
+WebUI.selectOptionByLabel(findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/select_RecordType'),
+	recordTypeFR, false)
+
+CustomKeywords.'com.maxids.IDSRecordManagement.addNewRecordUSandFR'(titleFR, countryCodeFR,appUrlFR, "", serialNoFR, filingDateFR, patentNoFR,issueDateFR, pubNoFR, pubDateFR)
+
+WebUI.click(findTestObject('Object Repository/AddRecord/Page_Max-IDS - 4.3.7011.72/button_Save'))
+
+WebUI.delay(5)
+
+
+'Assign to group'
+CustomKeywords.'com.maxids.CustomFunctions.assignGroupUserAndRecord'('1','addRecord')
+
+WebUI.delay(4)
+
+'submit the record'
+WebUI.click(findTestObject('Object Repository/AddRecord/Page_Max-IDS - 4.3.7011.72/button_finalSave'))
+WebUI.delay(10)
+
+
+
+//***********Create Journal record
+'move add/edit record page '
+WebUI.navigateToUrl(url+'EditRecord/Index')
+
+WebUI.delay(5)
+
+'Changing the Record Type'
+WebUI.selectOptionByLabel(findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/select_RecordType'),
+	recordTypeJR, false)
+
+
+CustomKeywords.'com.maxids.IDSRecordManagement.addNewRecordNPL'(titleJR, appUrlJR, citationJR)
+
+WebUI.click(findTestObject('Object Repository/AddRecord/Page_Max-IDS - 4.3.7011.72/button_Save'))
+
+WebUI.delay(5)
+
+
+'Assign to group'
+CustomKeywords.'com.maxids.CustomFunctions.assignGroupUserAndRecord'('1','addRecord')
+
+WebUI.delay(4)
+
+'submit the record'
+WebUI.click(findTestObject('Object Repository/AddRecord/Page_Max-IDS - 4.3.7011.72/button_finalSave'))
+WebUI.delay(10)
+
+
+
+//************Create Others record
+'move add/edit record page '
+WebUI.navigateToUrl(url+'EditRecord/Index')
+
+WebUI.delay(5)
+
+'Changing the Record Type'
+WebUI.selectOptionByLabel(findTestObject('Object Repository/RecordManagement/Page_Max-IDS - 4.3.7062.737/select_RecordType'),
+	recordTypeOT, false)
+
+
+CustomKeywords.'com.maxids.IDSRecordManagement.addNewRecordNPL'(titleOT, appUrlOT, citationOT)
+
+WebUI.click(findTestObject('Object Repository/AddRecord/Page_Max-IDS - 4.3.7011.72/button_Save'))
+
+WebUI.delay(5)
+
+
+'Assign to group'
+CustomKeywords.'com.maxids.CustomFunctions.assignGroupUserAndRecord'('1','addRecord')
+
+WebUI.delay(4)
+
+'submit the record'
+WebUI.click(findTestObject('Object Repository/AddRecord/Page_Max-IDS - 4.3.7011.72/button_finalSave'))
+WebUI.delay(10)

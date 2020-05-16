@@ -1,0 +1,93 @@
+import static com.kms.katalon.core.testdata.TestDataFactory.findTestData
+import static com.kms.katalon.core.testobject.ObjectRepository.findTestObject
+
+import java.sql.ResultSet as ResultSet
+
+import com.kms.katalon.core.testdata.TestData as TestData
+import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
+
+/**
+ * The test case is used to verify the record/asset count from the advanced search page.
+ 
+ * Scenario: navigate to the advanced search and get the record count for the below
+ * Total no of records,Total no of US Application record,Total no of US Patent record,Total no of Foreign record,Total no of Journal record,Total no of Others record
+ * connect to the database and get the active record count for the above
+ * compare the count (application , database)
+  * NOTE :
+  */
+//Initialization
+def applicationFullTextQuery = []
+
+def dbQuery = []
+
+def expectedRecordCountList = [:]
+
+def actualRecordCountList = [:]
+
+String url = Baseurl + Clientname
+
+'Get the test data from the excel sheet'
+TestData data = findTestData('Advanced Search')
+
+data.changeSheet('RecordCount')
+
+for (int excelRow : (1..data.getRowNumbers())) {
+    selectQuery0 = data.getValue('Full Text Query', excelRow)
+
+    applicationFullTextQuery.add(selectQuery0)
+
+    selectQuery1 = data.getValue('Db Query', excelRow)
+
+    dbQuery.add(selectQuery1)
+}
+
+'Connect to Database'
+CustomKeywords.'com.maxids.SQLConnection.connectDB'(dbServer, port, databaseName, dbUserName, dbUserPassword)
+
+dbQuery.eachWithIndex({ def item, def index ->
+        ResultSet getTheCount = CustomKeywords.'com.maxids.SQLConnection.executeQuery'(dbQuery.get(index))
+
+        while (getTheCount.next()) {
+            'Get the NoOfRecords cout'
+            int totalCount = getTheCount.getObject('NoOfRecords')
+
+            'Store the full-text query and total record count in Map'
+            expectedRecordCountList.put(applicationFullTextQuery.get(index), totalCount)
+        }
+    })
+
+println(expectedRecordCountList)
+
+'Close DB connection'
+CustomKeywords.'com.maxids.SQLConnection.closeDatabaseConnection'()
+
+'Navigate to application url.'
+CustomKeywords.'com.maxids.CustomFunctions.navigateToLogin'(Baseurl, Clientname)
+
+'Login into the application with valid username and password.'
+CustomKeywords.'com.maxids.CustomFunctions.login'(Username, Password)
+
+dashboardlabel = WebUI.getText(findTestObject('Object Repository/Dashboard/div_DashboardBreadCrumb'))
+
+'Verify logged user can able to view the dashboard page.'
+assert WebUI.verifyEqual(dashboardlabel.trim(), 'Summary')
+
+WebUI.delay(5)
+
+
+applicationFullTextQuery.eachWithIndex({ def itemFullText, def indexFullText ->
+        'Get the full-text search total record count [@param - application URL, full-text search query]'
+        int actualCount = CustomKeywords.'com.maxids.CustomFunctions.getResultCountInSearchList'(url, applicationFullTextQuery.get(
+                indexFullText))
+
+        println(actualCount)
+
+        'Store the full-text query and total record count in Map'
+        actualRecordCountList.put(applicationFullTextQuery.get(indexFullText), actualCount)
+    })
+
+//assert actualRecordCountList.equals(expectedRecordCountList)
+'Compare the actual and expected'
+assert WebUI.verifyEqual(actualRecordCountList, expectedRecordCountList)
+
+WebUI.closeBrowser()

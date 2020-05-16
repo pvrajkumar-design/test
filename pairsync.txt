@@ -1,0 +1,28 @@
+PAIR Sync
+
+User role:	//*[@id="workfor"]
+Acc name:	//*[@id="CertificateDropdown"]
+Cust No:	//*[@id="CustomerDropdown"]
+GetDetailsBtn	//*[@id="btnGetApplications"]
+Watch icon	//*[@id="Watched-List-con"]/div/div[2]/table/thead/tr/th[6]/label/span
+create record	//*[@id="pairsync-accordion"]/div/div[1]/div/span[2]/a
+frequency	//*[@id="frequencyDropdown"]
+save		//*[@id="btnSave_PairSync"]
+cancel		//*[@id="content"]/div[1]/section/div/div/div/section/div/div/div[6]/div/div/button[1]
+
+filter		//*[@id="dropdownMenuDivider"]/i
+Edit		//*[@id="pairsync-details"]/tbody/tr[3]/td[8]/a[1]/i
+delete		//*[@id="pairsync-details"]/tbody/tr[3]/td[8]/a[2]/i
+
+//*[@id="pairsync-details"]/tbody/tr[3]/td[3]
+
+//*[@id="list-div-left"]/tr[1]/td[6]/div/label/span
+
+//*[@id="list-div-left"]/tr[1]/td[6]/div/span
+
+
+
+
+
+
+WebUI.selectOptionByValue(findTestObject('AssignGroupsToRecord/dropdown-TypeSelection'), recordFromExcel, false, FailureHandling.STOP_ON_FAILURE)

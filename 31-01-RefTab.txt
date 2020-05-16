@@ -1,0 +1,425 @@
+package com.maxids
+
+import static com.kms.katalon.core.testobject.ObjectRepository.findTestObject
+
+import org.openqa.selenium.By
+import org.openqa.selenium.Keys
+import org.openqa.selenium.WebDriver
+import org.openqa.selenium.WebElement
+import org.openqa.selenium.interactions.Actions
+
+import com.kms.katalon.core.annotation.Keyword
+import com.kms.katalon.core.testobject.ConditionType
+import com.kms.katalon.core.testobject.TestObject
+import com.kms.katalon.core.webui.driver.DriverFactory
+import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
+
+
+public class ReferenceTab {
+
+	def referenceTabReferenceStateWiseRecordSelection(String expectedRefState,String tableid){
+		WebDriver driver = DriverFactory.getWebDriver()
+		def selectedRecordId =''
+		//WebElement RefTable = driver.findElement(By.xpath('//*[@id= \''+tableid+'\']/tbody'))
+		WebElement RefTable = driver.findElement(By.xpath("//*[@id='${tableid}']/tbody"))
+		int x = RefTable.getLocation().getX()
+		int y = RefTable.getLocation().getY()
+
+		List<WebElement> rowOfTable = RefTable.findElements(By.tagName('tr'))
+		int Totalcount = rowOfTable.size()
+		Actions actions = new Actions(driver)
+		for (int row : (1..Totalcount)) {
+			WebElement elementState = driver.findElement(By.xpath("//*[@id='${tableid}']/tbody/tr[${row}]/td[4]/span[4]"))
+
+			actions.moveToElement(elementState).perform()
+
+			String actualRefState = driver.findElement(By.xpath("//*[@id='${tableid}']/tbody/tr[${row}]/td[4]/span[4]")).getText()
+
+			if (actualRefState == expectedRefState) {
+
+
+				WebElement chooseReference = driver.findElement(By.xpath("//*[@id='${tableid}']/tbody/tr[${row}]/td[2]/input"))
+
+				chooseReference.click()
+				if(tableid=='forRef'){
+					WebUI.scrollToPosition(x, y-100)
+				}
+
+
+				//actions.moveToElement(chooseReference).click().perform()
+				WebUI.delay(3)
+
+				selectedRecordId = driver.findElement(By.xpath("//*[@id='${tableid}']/tbody/tr[${row}]/td[5]")).getText()
+				break
+			}
+		}
+		println selectedRecordId
+		return selectedRecordId
+	}
+
+
+
+	@Keyword
+	def referenceTabAddingSourceSingleReference(String expectedRefState,String tableid, String source, String sourceComments,String sourceDate,String isCited,String citedDate){
+		WebDriver driver = DriverFactory.getWebDriver()
+		def selectedRecordId =''
+		WebElement RefTable = driver.findElement(By.xpath("//*[@id='${tableid}']/tbody"))
+		int x = RefTable.getLocation().getX()
+		int y = RefTable.getLocation().getY()
+
+		List<WebElement> rowOfTable = RefTable.findElements(By.tagName('tr'))
+		int Totalcount = rowOfTable.size()
+		Actions actions = new Actions(driver)
+		for (int row : (1..Totalcount)) {
+			WebElement elementState = driver.findElement(By.xpath("//*[@id='${tableid}']/tbody/tr[${row}]/td[4]/span[4]"))
+
+			actions.moveToElement(elementState).perform()
+
+			String actualRefState = driver.findElement(By.xpath("//*[@id='${tableid}']/tbody/tr[${row}]/td[4]/span[4]")).getText()
+
+			if (actualRefState == expectedRefState) {
+
+				'click the source icon'
+				if(tableid!='othRef'){
+					WebElement selectSourceIcon = driver.findElement(By.xpath("//*[@id='${tableid}']/tbody/tr[${row}]/td[12]/a/img"))
+					selectSourceIcon.click()
+					WebUI.delay(3)
+				} else{
+					WebElement selectSourceIcon = driver.findElement(By.xpath("//*[@id='${tableid}']/tbody/tr[${row}]/td[8]/a/img"))
+					selectSourceIcon.click()
+					WebUI.delay(3)
+				}
+
+				if(tableid=='forRef'){
+					WebUI.scrollToPosition(x, y)
+				}
+				'Select source'
+				WebUI.selectOptionByLabel(findTestObject('Object Repository/ReferenceTab/Page_Max-IDS - 4.3.7048.1140/Source popup/select_source'),
+						source, false)
+
+				'Enter source date'
+				WebUI.setText(findTestObject('Object Repository/ReferenceTab/Page_Max-IDS - 4.3.7048.1140/Source popup/input_txtSourceDate'),
+						sourceDate)
+
+				'Enter source comments'
+				WebUI.setText(findTestObject('Object Repository/ReferenceTab/Page_Max-IDS - 4.3.7048.1140/Source popup/textarea_sourcecomments'),
+						sourceComments)
+				if(isCited.equalsIgnoreCase("Yes")){
+					WebUI.click(findTestObject('Object Repository/ReferenceTab/Page_Max-IDS - 4.3.7048.1140/Source popup/input_Mark as Cited_chkBox'))
+					WebUI.setText(findTestObject('Object Repository/ReferenceTab/Page_Max-IDS - 4.3.7048.1140/Source popup/input_Mark as Cited_CitedDate'),citedDate)
+				}
+
+				WebUI.click(findTestObject('Object Repository/ReferenceTab/Page_Max-IDS - 4.3.7048.1140/Source popup/button_BulkSourceSave'))
+
+				WebUI.delay(7)
+
+
+				//actions.moveToElement(chooseReference).click().perform()
+				WebUI.delay(3)
+
+				selectedRecordId = driver.findElement(By.xpath("//*[@id='${tableid}']/tbody/tr[${row}]/td[5]")).getText()
+				break
+			}
+		}
+		println selectedRecordId
+		return selectedRecordId
+	}
+
+
+	@Keyword
+	def referenceTabUpdateExistingSourceDetails(String tableid, String action,String rowID,String source, String sourceComments,String sourceDate,String isCited,String citedDate){
+		WebDriver driver = DriverFactory.getWebDriver()
+		def selectedRecordId =''
+		WebElement RefTable = driver.findElement(By.xpath("//*[@id='${tableid}']/tbody"))
+		int x = RefTable.getLocation().getX()
+		int y = RefTable.getLocation().getY()
+
+		List<WebElement> rowOfTable = RefTable.findElements(By.tagName('tr'))
+		int Totalcount = rowOfTable.size()
+		Actions actions = new Actions(driver)
+		for (int row : (1..Totalcount)) {
+
+			'click the source icon'
+			if(tableid!='othRef'){
+				WebElement selectSourceIcon = driver.findElement(By.xpath("//*[@id='${tableid}']/tbody/tr[${row}]/td[12]/a/img"))
+				selectSourceIcon.click()
+				WebUI.delay(3)
+			} else{
+				WebElement selectSourceIcon = driver.findElement(By.xpath("//*[@id='${tableid}']/tbody/tr[${row}]/td[8]/a/img"))
+				selectSourceIcon.click()
+				WebUI.delay(3)
+			}
+
+			if(tableid=='forRef'){
+				WebUI.scrollToPosition(x, y)
+			}
+
+			'Check the source table'
+			WebUI.delay(2)
+			WebElement sourceTable = driver.findElement(By.xpath("//*[@id='AddSourceModal']/div[2]/div/div[2]/div[2]/div/table/tbody"))
+			List<WebElement>noOfSource = sourceTable.findElements(By.tagName("tr"))
+			int sourceCount = noOfSource.size()
+			if(sourceCount>=Integer.parseInt(rowID)){
+
+				'Click the Edit link'
+				WebUI.delay(2)
+				WebElement secondRow = driver.findElement(By.xpath("//*[@id='AddSourceModal']/div[2]/div/div[2]/div[2]/div/table/tbody/tr[${rowID}]/td[5]"))
+				WebElement clickEdit = secondRow.findElement(By.linkText(action))
+				clickEdit.click()
+
+				'Select source'
+				WebUI.selectOptionByLabel(findTestObject('Object Repository/ReferenceTab/Page_Max-IDS - 4.3.7048.1140/Source popup/select_source'),
+						source, false)
+
+				'Enter source date'
+				WebUI.setText(findTestObject('Object Repository/ReferenceTab/Page_Max-IDS - 4.3.7048.1140/Source popup/input_txtSourceDate'),
+						sourceDate)
+
+				'Enter source comments'
+				WebUI.setText(findTestObject('Object Repository/ReferenceTab/Page_Max-IDS - 4.3.7048.1140/Source popup/textarea_sourcecomments'),
+						sourceComments)
+				if(isCited.equalsIgnoreCase("Yes")){
+					WebUI.click(findTestObject('Object Repository/ReferenceTab/Page_Max-IDS - 4.3.7048.1140/Source popup/input_Mark as Cited_chkBox'))
+					WebUI.setText(findTestObject('Object Repository/ReferenceTab/Page_Max-IDS - 4.3.7048.1140/Source popup/input_Mark as Cited_CitedDate'),citedDate)
+				}
+				selectedRecordId = driver.findElement(By.xpath("//*[@id='${tableid}']/tbody/tr[${row}]/td[5]")).getText()
+				WebUI.click(findTestObject('Object Repository/ReferenceTab/Page_Max-IDS - 4.3.7048.1140/Source popup/button_BulkSourceSave'))
+
+				WebUI.delay(7)
+				break
+
+
+			} else{
+				WebUI.click(findTestObject('Object Repository/ReferenceTab/Page_Max-IDS - 4.3.7048.1140/Source popup/button_Cancel'))
+				WebUI.delay(2)
+			}
+		}
+		return selectedRecordId
+	}
+
+
+
+	@Keyword
+	def referenceTabDeleteSourceDetails(String tableid,String rowID){
+		WebDriver driver = DriverFactory.getWebDriver()
+		def expectedSourceDetails =[:]
+		WebElement RefTable = driver.findElement(By.xpath("//*[@id='${tableid}']/tbody"))
+		int x = RefTable.getLocation().getX()
+		int y = RefTable.getLocation().getY()
+
+		List<WebElement> rowOfTable = RefTable.findElements(By.tagName('tr'))
+		int Totalcount = rowOfTable.size()
+		Actions actions = new Actions(driver)
+		for (int row : (1..Totalcount)) {
+			String selectedRecordId = driver.findElement(By.xpath("//*[@id='${tableid}']/tbody/tr[${row}]/td[5]")).getText()
+			expectedSourceDetails.put('recordid', selectedRecordId)
+
+			'click the source icon'
+			if(tableid!='othRef'){
+				WebElement selectSourceIcon = driver.findElement(By.xpath("//*[@id='${tableid}']/tbody/tr[${row}]/td[12]/a/img"))
+				selectSourceIcon.click()
+				WebUI.delay(3)
+			} else{
+				WebElement selectSourceIcon = driver.findElement(By.xpath("//*[@id='${tableid}']/tbody/tr[${row}]/td[8]/a/img"))
+				selectSourceIcon.click()
+				WebUI.delay(3)
+			}
+
+			if(tableid=='forRef'){
+				WebUI.scrollToPosition(x, y)
+			}
+
+			'Check the source table'
+			WebUI.delay(2)
+			WebElement sourceTable = driver.findElement(By.xpath("//*[@id='AddSourceModal']/div[2]/div/div[2]/div[2]/div/table/tbody"))
+			List<WebElement>noOfSource = sourceTable.findElements(By.tagName("tr"))
+			int sourceCount = noOfSource.size()
+			expectedSourceDetails.put('totalcount', sourceCount)
+			if(sourceCount>=Integer.parseInt(rowID)){
+
+				'collect the source details and delete'
+				WebUI.delay(2)
+				String actualSource = driver.findElement(By.xpath("//*[@id='AddSourceModal']/div[2]/div/div[2]/div[2]/div/table/tbody/tr[${rowID}]/td[1]")).getText()
+				expectedSourceDetails.put('source', actualSource)
+
+				String comment = driver.findElement(By.xpath("//*[@id='AddSourceModal']/div[2]/div/div[2]/div[2]/div/table/tbody/tr[${rowID}]/td[2]")).getText()
+				expectedSourceDetails.put('sourcecomments', comment)
+				String sourceDate = driver.findElement(By.xpath("//*[@id='AddSourceModal']/div[2]/div/div[2]/div[2]/div/table/tbody/tr[${rowID}]/td[3]")).getText()
+				expectedSourceDetails.put('sourcedate', sourceDate)
+				WebElement secondRow = driver.findElement(By.xpath("//*[@id='AddSourceModal']/div[2]/div/div[2]/div[2]/div/table/tbody/tr[${rowID}]/td[5]"))
+				WebElement clickDelete = secondRow.findElement(By.linkText('Delete'))
+				clickDelete.click()
+
+				boolean elementPresent=WebUI.waitForAlert(10)
+				if (elementPresent==true) {
+					def alertText = WebUI.getAlertText()
+					println alertText
+					WebUI.acceptAlert()
+
+				}
+				WebUI.click(findTestObject('Object Repository/ReferenceTab/Page_Max-IDS - 4.3.7048.1140/Source popup/button_Cancel'))
+				WebUI.delay(2)
+				break
+
+
+			} else{
+				WebUI.click(findTestObject('Object Repository/ReferenceTab/Page_Max-IDS - 4.3.7048.1140/Source popup/button_Cancel'))
+				WebUI.delay(2)
+			}
+		}
+		println expectedSourceDetails
+		return expectedSourceDetails
+	}
+
+
+	@Keyword
+	def referneceTabFlaggedReferenceSelection(String state,String tableid){
+		def output = [:]
+		WebDriver driver = DriverFactory.getWebDriver()
+		WebElement RefTable = driver.findElement(By.xpath("//*[@id='${tableid}']/tbody"))
+		List<WebElement> RowsOf_RefTable = RefTable.findElements(By.tagName('tr'))
+		int Totalcount = RowsOf_RefTable.size()
+		if(state=='flag'){
+			for (int row : (1..Totalcount)) {
+
+				boolean isPresentFr = driver.findElements(By.xpath("//*[@id='${tableid}']/tbody/tr[${row}]/td[4]/span[2]/a/i")).size() > 0
+				if(isPresentFr){
+
+					'collect the reference record id'
+					String selectedRecordID = driver.findElement(By.xpath("//*[@id='${tableid}']/tbody/tr[${row}]/td[5]/a")).getText()
+
+					'collect the reference current state'
+					String selectedRecordState = driver.findElement(By.xpath("//*[@id='${tableid}']/tbody/tr[${row}]/td[4]/span[4]/font/b")).getText()
+
+
+					WebElement elementState = driver.findElement(By.xpath("//*[@id='${tableid}']/tbody/tr[${row}]/td[2]/input"))
+					Actions actions = new Actions(driver);
+					actions.moveToElement(elementState).perform();
+
+					WebUI.delay(2)
+
+					'choose the reference record'
+					WebElement chooseReference = driver.findElement(By.xpath("//*[@id='${tableid}']/tbody/tr[${row}]/td[2]/input")).click()
+					output.put("recordid",selectedRecordID)
+					output.put("referencestate",selectedRecordState)
+					break
+				}
+			}
+
+		}
+		return output
+	}
+
+
+	@Keyword
+	boolean referenceTabSelectAlltheReferencesStateWise(String className){
+		WebDriver driver = DriverFactory.getWebDriver()
+		WebElement ed = driver.findElement(By.xpath("//input[@class='${className}']"))
+		ed.click()
+		WebUI.delay(15)
+
+	}
+
+	@Keyword
+	def referenceTabGetTheSelectedRecord(String tableName){
+		WebDriver driver = DriverFactory.getWebDriver()
+		def selectedRecordList = []
+
+		WebElement RefTable = driver.findElement(By.xpath("//*[@id='${tableName}']/tbody"))
+
+		List<WebElement> RowsOf_RefTable = RefTable.findElements(By.tagName('tr'))
+		int Totalcount = RowsOf_RefTable.size()
+		for (int row : (1..Totalcount)) {
+			boolean isChecked = driver.findElement(By.xpath("//*[@id='${tableName}']/tbody/tr[${row}]/td[2]/input")).isSelected()
+			if(isChecked){
+				String selectedRecordID = driver.findElement(By.xpath("//*[@id='${tableName}']/tbody/tr[${row}]/td[5]/a")).getText()
+				selectedRecordList+=selectedRecordID
+			}
+		}
+		println selectedRecordList
+		return selectedRecordList
+	}
+
+
+	@Keyword
+	def referenceTabGetAllTheSelectedRecord(String tableName){
+		WebDriver driver = DriverFactory.getWebDriver()
+		def referenceDetails = [:]
+		def tempRecordID =[]
+		def tempRefState =[]
+		def tempSource =[]
+		def tempSourceComments =[]
+		def tempSourceDate =[]
+		def tempCitedDate =[]
+
+
+
+		WebElement RefTable = driver.findElement(By.xpath("//*[@id='${tableName}']/tbody"))
+
+		List<WebElement> RowsOf_RefTable = RefTable.findElements(By.tagName('tr'))
+		int Totalcount = RowsOf_RefTable.size()
+
+		if(tableName!='othRef'){
+			for (int row : (1..Totalcount)) {
+				boolean isChecked = driver.findElement(By.xpath("//*[@id='${tableName}']/tbody/tr[${row}]/td[2]/input")).isSelected()
+				if(isChecked){
+					String selectedRecordID = driver.findElement(By.xpath("//*[@id='${tableName}']/tbody/tr[${row}]/td[5]/a")).getText()
+					tempRecordID.add(selectedRecordID)
+
+					String referenceState = driver.findElement(By.xpath("//*[@id='${tableName}']/tbody/tr[${row}]/td[4]/span[4]")).getText()
+					tempRefState.add(referenceState)
+
+					String source = driver.findElement(By.xpath("//*[@id='${tableName}']/tbody/tr[$row]/td[12]")).getText()
+					tempSource.add(source)
+
+					String recentSourceComments = driver.findElement(By.xpath("//*[@id='${tableName}']/tbody/tr[$row]/td[13]")).getText()
+					tempSourceComments.add(recentSourceComments)
+
+					String sourceDate = driver.findElement(By.xpath("//*[@id='${tableName}']/tbody/tr[$row]/td[14]")).getText()
+					tempSourceDate.add(sourceDate)
+
+					String citedDate = driver.findElement(By.xpath("//*[@id='${tableName}']/tbody/tr[${row}]/td[15]")).getText()
+					tempCitedDate.add(citedDate)
+
+				}
+			}
+
+		}
+		else {
+			for (int row : (1..Totalcount)) {
+				boolean isChecked = driver.findElement(By.xpath("//*[@id='${tableName}']/tbody/tr[${row}]/td[2]/input")).isSelected()
+				if(isChecked){
+					String selectedRecordID = driver.findElement(By.xpath("//*[@id='${tableName}']/tbody/tr[$row]/td[5]")).getText()
+					tempRecordID.add(selectedRecordID)
+
+					String referenceState = driver.findElement(By.xpath("//*[@id='${tableName}']/tbody/tr[$row]/td[4]")).getText()
+					tempRefState.add(referenceState)
+
+
+					String source = driver.findElement(By.xpath("//*[@id='${tableName}']/tbody/tr[$row]/td[8]")).getText()
+					tempRefState.add(source)
+
+					String recentSourceComments = driver.findElement(By.xpath("//*[@id='${tableName}']/tbody/tr[$row]/td[9]")).getText()
+					tempSourceComments.add(recentSourceComments)
+
+					String sourceDate = driver.findElement(By.xpath("//*[@id='${tableName}']/tbody/tr[$row]/td[10]")).getText()
+					tempSourceDate.add(sourceDate)
+
+					String citedDate = driver.findElement(By.xpath("//*[@id='${tableName}']/tbody/tr[$row]/td[11]")).getText()
+					tempCitedDate.add(citedDate)
+
+				}
+			}
+		}
+		referenceDetails.put('recordid',tempRecordID)
+		referenceDetails.put('refernecestate',tempRefState)
+		referenceDetails.put('source',tempSource)
+		referenceDetails.put('sourcecomments',tempSourceComments)
+		referenceDetails.put('sourcedate',tempSourceDate)
+		referenceDetails.put('citedDate',tempCitedDate)
+
+
+		return referenceDetails
+	}
+
+}

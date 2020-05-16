@@ -1,0 +1,163 @@
+import static com.kms.katalon.core.checkpoint.CheckpointFactory.findCheckpoint
+import static com.kms.katalon.core.testcase.TestCaseFactory.findTestCase
+import static com.kms.katalon.core.testdata.TestDataFactory.findTestData
+import static com.kms.katalon.core.testobject.ObjectRepository.findTestObject
+import com.kms.katalon.core.checkpoint.Checkpoint as Checkpoint
+import com.kms.katalon.core.cucumber.keyword.CucumberBuiltinKeywords as CucumberKW
+import com.kms.katalon.core.mobile.keyword.MobileBuiltInKeywords as Mobile
+import com.kms.katalon.core.model.FailureHandling as FailureHandling
+import com.kms.katalon.core.testcase.TestCase as TestCase
+import com.kms.katalon.core.testdata.TestData as TestData
+import com.kms.katalon.core.testobject.TestObject as TestObject
+import com.kms.katalon.core.webservice.keyword.WSBuiltInKeywords as WS
+import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
+import internal.GlobalVariable as GlobalVariable
+import java.sql.ResultSet as ResultSet
+import org.openqa.selenium.By
+import org.openqa.selenium.JavascriptExecutor
+import org.openqa.selenium.Keys
+import org.openqa.selenium.WebDriver
+import org.openqa.selenium.WebElement
+import org.openqa.selenium.interactions.Actions
+
+import com.kms.katalon.core.annotation.Keyword
+import com.kms.katalon.core.testobject.ConditionType
+import com.kms.katalon.core.testobject.RequestObject
+import com.kms.katalon.core.testobject.ResponseObject
+import com.kms.katalon.core.testobject.TestObject
+import com.kms.katalon.core.webservice.keyword.WSBuiltInKeywords
+import com.kms.katalon.core.webui.driver.DriverFactory
+import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
+import java.sql.ResultSet
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import org.openqa.selenium.By
+import org.openqa.selenium.support.ui.Select
+
+import com.kms.katalon.core.webui.driver.DriverFactory
+
+/*
+ * Given I Navigate to PAIR Sync account page
+ * When I open a sponsor record 
+ * And switch on the toggle to move the item from unwatched to watched item and save
+ * And navigate to PAIR Sync Dashboard page
+ * And search for the specific record and get the count of PAIR tab
+ * And run the EXE for sync operation
+ * And refresh the PAIR tab page and get the count of PAIR tab and assert
+ * Then the count of IFW values added in Database should match with the count incremented in the PAIR tab
+ *
+ */
+
+excelData= findTestData('Data Files/PAIRSync')
+String responseCode
+int accountNameRowsCount
+int row
+int pairtab_count_before
+int pairtab_count_after
+ArrayList<String> recordList = new ArrayList<>()
+ArrayList<String> dateList = new ArrayList<>()
+String url = Baseurl + Clientname
+
+
+
+'New test case for Login'
+WebUI.callTestCase(findTestCase('MaxIDS TC/Regression pack/Login/Login'), [('Baseurl') : GlobalVariable.Url, ('Clientname') : GlobalVariable.Clientname
+	, ('Username') : GlobalVariable.Username, ('Password') : GlobalVariable.Password, ('dbServer') : GlobalVariable.dbServer
+	, ('port') : GlobalVariable.port, ('databaseName') : GlobalVariable.databaseName, ('dbUserName') : GlobalVariable.dbUserName
+	, ('dbUserPassword') : GlobalVariable.dbUserPassword], FailureHandling.CONTINUE_ON_FAILURE)
+
+'Get the page response code'
+responseCode = CustomKeywords.'com.maxids.CustomFunctions.getPageResponseCode'(WebUI.getUrl())
+
+'Navigate to Pair Sync Dashboard page'
+WebUI.navigateToUrl(url + 'PairSync/Dashboard')
+WebUI.waitForElementVisible(findTestObject('Object Repository/PAIRSync/div_PAIRSyncBreadCrumb'), 5)
+WebUI.delay(3)
+
+'Selecting the PAIR Sync record for edit'
+accountNameRowsCount=CustomKeywords.'com.maxids.PairSyncDashboard.accountsRowCount'()
+String getSponsorName = excelData.getValue('SponsorName',1)
+CustomKeywords.'com.maxids.PairSyncDashboard.PairSyncRecordSelection'(getSponsorName,accountNameRowsCount)
+WebUI.delay(3)
+
+int watchlistItemCount=CustomKeywords.'com.maxids.PairSyncDashboard.watchlistCount'()
+
+
+'selecting the records and toggling it to watched'
+String watchlistRecord = excelData.getValue('WatchlistRecord',1)
+println watchlistRecord
+//recordList=CustomKeywords.'com.maxids.PairSyncDashboard.watchListSelector'(watchlistCount)
+boolean isRecordAvailable=CustomKeywords.'com.maxids.PairSyncDashboard.watchListSelector'(watchlistRecord,watchlistItemCount)
+ 
+if (isRecordAvailable==true)
+{
+'Navigating to the bottom of page'
+WebUI.scrollToElement(findTestObject('PAIRSync/dropdownFrequency'), 0)
+WebUI.waitForElementVisible(findTestObject('PAIRSync/dropdownFrequency'), 2)
+
+'Click on save button to save the changes'
+WebUI.click(findTestObject('Object Repository/PAIRSync/PAIRSyncRecordSave'))
+WebUI.waitForElementVisible(findTestObject('Object Repository/PAIRSync/div_PAIRSyncBreadCrumb'), 5)
+WebUI.delay(3)
+
+'Navigate to Dashboard page'
+WebUI.navigateToUrl(url + 'Dashboard/index')
+WebUI.delay(3)
+WebUI.navigateToUrl(url + 'DetailedView/Index?RecordId=R000149#')
+
+'Click on the PAIR tab'
+WebUI.click(findTestObject('Object Repository/Dashboard/pairTabSelection'))
+WebUI.delay(3)
+
+'Take the count of the PAIR tab'
+pairtab_count_before=CustomKeywords.'com.maxids.PairSyncDashboard.pairTabCount'()
+print pairtab_count_before
+
+'Execute the Exe file'
+
+
+
+
+
+'Refresh the page and take the count of PAIR tab post new entries are made'
+WebUI.refresh()
+
+'Assert that the count of PAIR tab post new entries made'
+pairtab_count_after=CustomKeywords.'com.maxids.PairSyncDashboard.pairTabCount'()
+print pairtab_count_after
+
+newIFWCount = excelData.getValue('NewIFWCount',1)
+assert WebUI.verifyEqual(newIFWCount,pairtab_count_after)
+
+'Take the values present in the PAIR tab'
+WebUI.navigateToUrl(url + 'DetailedView/Index?RecordId=R158953#')
+WebUI.delay(10)
+
+'Click on the PAIR tab'
+WebUI.click(findTestObject('Object Repository/Dashboard/pairTabSelection'))
+WebUI.delay(3)
+
+dateList=CustomKeywords.'com.maxids.PairSyncDashboard.pairTabDateList'(pairtab_count_after)
+println dateList
+
+descriptionList=CustomKeywords.'com.maxids.PairSyncDashboard.pairTabDescriptionList'(pairtab_count_after)
+println descriptionList
+
+codeList=CustomKeywords.'com.maxids.PairSyncDashboard.pairTabCodeList'(pairtab_count_after)
+println codeList
+
+pagecountList=CustomKeywords.'com.maxids.PairSyncDashboard.pairTabPageCountList'(pairtab_count_after)
+println pagecountList
+
+statusList=CustomKeywords.'com.maxids.PairSyncDashboard.pairTabStatusList'(pairtab_count_after)
+println statusList
+
+
+}
+
+else if(isRecordAvailable==false)
+{
+	WebUI.closeBrowser()
+}
+
+

@@ -1,0 +1,552 @@
+package com.maxids
+
+import static com.kms.katalon.core.testobject.ObjectRepository.findTestObject
+
+import java.util.ArrayList
+
+import org.openqa.selenium.By
+import org.openqa.selenium.WebDriver
+import org.openqa.selenium.WebElement
+
+import com.kms.katalon.core.annotation.Keyword
+import com.kms.katalon.core.testobject.TestObject
+import com.kms.katalon.core.webui.driver.DriverFactory
+import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
+import org.openqa.selenium.support.ui.Select
+import java.util.concurrent.TimeUnit
+
+import org.openqa.selenium.Keys
+import org.openqa.selenium.interactions.Actions
+
+
+public class PAIRSetup {
+
+
+	//int rows_count
+	boolean officeActionNPL
+	ArrayList<String> obtainedListOAPairName = new ArrayList<>()
+	WebDriver driver = DriverFactory.getWebDriver()
+	ArrayList<String> obtainedList = new ArrayList<>()
+	int rows_count
+
+
+	@Keyword
+	def addNewPractitioner(String practitionerName,String email,String password, String secretKey){
+
+		if(practitionerName?.trim()){
+
+			TestObject setPractitionerName = findTestObject('PAIR Account Setup Page/input-Paralegalname')
+			WebUI.clearText(setPractitionerName)
+			WebUI.setText(setPractitionerName, practitionerName)
+			WebUI.delay(3)
+		}
+
+		if(email?.trim()){
+			TestObject setEmail = findTestObject('PAIR Account Setup Page/input-EmailAddress')
+			WebUI.clearText(setEmail)
+			WebUI.setText(setEmail, email)
+			WebUI.delay(3)
+		}
+
+		if(password?.trim()){
+			TestObject setPassword = findTestObject('PAIR Account Setup Page/input-Password')
+			WebUI.clearText(setPassword)
+			WebUI.setText(setPassword, password)
+			WebUI.delay(3)
+		}
+
+		if(secretKey?.trim()){
+			TestObject setSecretKey = findTestObject('PAIR Account Setup Page/input-Secretkey')
+			WebUI.clearText(setSecretKey)
+			WebUI.setText(setSecretKey, secretKey)
+			WebUI.delay(3)
+		}
+
+		'Click Add Certificate button'
+		WebUI.click(findTestObject('PAIR Account Setup Page/AddCertificate'))
+		WebUI.delay(1)
+	}
+
+
+	@Keyword
+	def practitionerEdit(String practitionerName,String email,String password, String secretKey){
+
+		if(practitionerName?.trim()){
+
+			TestObject setPractitionerName = findTestObject('PAIR Account Setup Page/input-Paralegalname')
+			WebUI.clearText(setPractitionerName)
+			WebUI.setText(setPractitionerName, practitionerName)
+			WebUI.delay(3)
+		}
+
+		if(email?.trim()){
+			TestObject setEmail = findTestObject('PAIR Account Setup Page/input-EmailAddress')
+			WebUI.clearText(setEmail)
+			WebUI.setText(setEmail, email)
+			WebUI.delay(3)
+		}
+
+		if(password?.trim()){
+			TestObject setPassword = findTestObject('PAIR Account Setup Page/input-Password')
+			WebUI.clearText(setPassword)
+			WebUI.setText(setPassword, password)
+			WebUI.delay(3)
+		}
+
+		if(secretKey?.trim()){
+			TestObject setSecretKey = findTestObject('PAIR Account Setup Page/input-Secretkey')
+			WebUI.clearText(setSecretKey)
+			WebUI.setText(setSecretKey, secretKey)
+			WebUI.delay(3)
+		}
+
+		'Click update button'
+		WebUI.click(findTestObject('Object Repository/PAIR Account Setup Page/button-Update'))
+		WebUI.delay(1)
+	}
+
+
+	@Keyword
+	def addNewPractitionerSupportStaff(String accountType, String practitionerName,String email,String password, String secretKey, String sponsorName, String sponsorRegistrationNo){
+
+		if(accountType?.trim() && accountType.equals("Sponsor")){
+
+			TestObject setIsSponsored = findTestObject('PAIR Account Setup Page/checkbox-isSponsored')
+			WebUI.waitForElementClickable(setIsSponsored, 10)
+			WebUI.click(setIsSponsored)
+			WebUI.delay(3)
+		}
+
+		if(practitionerName?.trim()){
+
+			TestObject setPractitionerName = findTestObject('PAIR Account Setup Page/input-Paralegalname')
+			WebUI.clearText(setPractitionerName)
+			WebUI.setText(setPractitionerName, practitionerName)
+			WebUI.delay(3)
+		}
+
+		if(email?.trim()){
+			TestObject setEmail = findTestObject('PAIR Account Setup Page/input-EmailAddress')
+			WebUI.clearText(setEmail)
+			WebUI.setText(setEmail, email)
+			WebUI.delay(3)
+		}
+
+		if(password?.trim()){
+			TestObject setPassword = findTestObject('PAIR Account Setup Page/input-Password')
+			WebUI.clearText(setPassword)
+			WebUI.setText(setPassword, password)
+			WebUI.delay(3)
+		}
+
+		if(secretKey?.trim()){
+			TestObject setSecretKey = findTestObject('PAIR Account Setup Page/input-Secretkey')
+			WebUI.clearText(setSecretKey)
+			WebUI.setText(setSecretKey, secretKey)
+			WebUI.delay(3)
+		}
+
+		if(sponsorName?.trim()){
+			TestObject setSponsorName = findTestObject('PAIR Account Setup Page/input-SponsoredPracName')
+			WebUI.clearText(setSponsorName)
+			WebUI.setText(setSponsorName, sponsorName)
+			WebUI.delay(3)
+		}
+
+		if(sponsorRegistrationNo?.trim()){
+			TestObject setSponsorRegistrationNo = findTestObject('PAIR Account Setup Page/input-SponsorRegNo')
+			WebUI.clearText(setSponsorRegistrationNo)
+			WebUI.setText(setSponsorRegistrationNo, sponsorRegistrationNo)
+			WebUI.delay(3)
+		}
+
+		'Click Add Certificate button'
+		WebUI.click(findTestObject('PAIR Account Setup Page/button-Add Certificate'))
+		WebUI.delay(1)
+	}
+
+
+	@Keyword
+	def editPractitionerSupportStaff(String practitionerName,String email,String password, String secretKey, String sponsorName, String sponsorRegistrationNo){
+
+		if(practitionerName?.trim()){
+
+			TestObject setPractitionerName = findTestObject('PAIR Account Setup Page/input-Paralegalname')
+			WebUI.clearText(setPractitionerName)
+			WebUI.setText(setPractitionerName, practitionerName)
+			WebUI.delay(3)
+		}
+
+		if(email?.trim()){
+			TestObject setEmail = findTestObject('PAIR Account Setup Page/input-EmailAddress')
+			WebUI.clearText(setEmail)
+			WebUI.setText(setEmail, email)
+			WebUI.delay(3)
+		}
+
+		if(password?.trim()){
+			TestObject setPassword = findTestObject('PAIR Account Setup Page/input-Password')
+			WebUI.clearText(setPassword)
+			WebUI.setText(setPassword, password)
+			WebUI.delay(3)
+		}
+
+		if(secretKey?.trim()){
+			TestObject setSecretKey = findTestObject('PAIR Account Setup Page/input-Secretkey')
+			WebUI.clearText(setSecretKey)
+			WebUI.setText(setSecretKey, secretKey)
+			WebUI.delay(3)
+		}
+
+		if(sponsorName?.trim()){
+			TestObject setSponsorName = findTestObject('PAIR Account Setup Page/input-SponsoredPracName')
+			WebUI.clearText(setSponsorName)
+			WebUI.setText(setSponsorName, sponsorName)
+			WebUI.delay(3)
+		}
+
+		if(sponsorRegistrationNo?.trim()){
+			TestObject setSponsorRegistrationNo = findTestObject('PAIR Account Setup Page/input-SponsorRegNo')
+			WebUI.clearText(setSponsorRegistrationNo)
+			WebUI.setText(setSponsorRegistrationNo, sponsorRegistrationNo)
+			WebUI.delay(3)
+		}
+
+		'Click update button'
+		WebUI.click(findTestObject('Object Repository/PAIR Account Setup Page/button-Update'))
+		WebUI.delay(1)
+	}
+
+
+	def clickNextPageInPagination(String nextPageLinkXpath){
+		WebDriver driver = DriverFactory.getWebDriver();
+		WebElement nextPage=driver.findElement(By.xpath(nextPageLinkXpath))
+		if(nextPage.isEnabled()) {
+			WebUI.delay(2)
+			nextPage.click()
+			WebUI.delay(2)
+		}
+		else if(!nextPage.isEnabled()) {
+			println ("No more pages to go further. ")
+		}
+	}
+
+
+	def getPAIRData(String action,String expectedPractitionerName, String expectedEmail){
+		WebDriver driver = DriverFactory.getWebDriver()
+		boolean inserted
+		List<WebElement> elements = driver.findElements(By.xpath("//ul[contains(@class,'pagination')]/li"))
+		int actualPageCount=elements.size()
+
+		inserted = getData(actualPageCount,action,expectedPractitionerName,expectedEmail)
+
+		return inserted
+	}
+
+	def getPAIRData(String action,String expectedPractitionerName, String expectedEmail, String expectedSponsorName, String expectedSponsorRegistrationNo){
+		WebDriver driver = DriverFactory.getWebDriver()
+		boolean inserted
+		List<WebElement> elements = driver.findElements(By.xpath("//ul[contains(@class,'pagination')]/li"))
+		int actualPageCount=elements.size()
+
+		inserted=	getData(actualPageCount,action,expectedPractitionerName,expectedEmail,expectedSponsorName,expectedSponsorRegistrationNo)
+
+		return inserted
+	}
+
+
+	def getData(int pageCount,String action,String expectedPractitionerName, String expectedEmail){
+		WebDriver driver = DriverFactory.getWebDriver()
+		boolean dataAvailable=false
+		int defaultPageCount=1
+		int totalPage
+		if(pageCount>0){
+			totalPage = pageCount-4
+		}else{
+
+			totalPage = 1
+		}
+		innerLoop : while (defaultPageCount<=totalPage){
+			WebElement practitionerTable = driver.findElement(By.xpath("//*[@id='frmPairUpload']/div/div[2]/div/div/table/tbody"))
+			List<WebElement> rowsPractitionerTable = practitionerTable.findElements(By.tagName("tr"))
+			for (int row : (1..rowsPractitionerTable.size())){
+				String actualPractitionerName = driver.findElement(By.xpath("//tr[${row}]/td[2]/span")).getText()
+				String actualEmail = driver.findElement(By.xpath("//tr[${row}]/td[3]/span")).getText()
+
+				if(actualPractitionerName.equals(expectedPractitionerName) && actualEmail.equals(expectedEmail)) {
+					dataAvailable=true
+					if(action.equalsIgnoreCase("Edit")){
+						WebElement locateEdit = driver.findElement(By.xpath("//tr[${row}]/td[8]/button[1]"))
+						locateEdit.click()
+						WebUI.delay(5)
+					}else if (action.equalsIgnoreCase("delete")){
+						WebElement locateDelete = driver.findElement(By.xpath("//tr[${row}]/td[8]/button[2]"))
+						locateDelete.click()
+						WebUI.delay(5)
+					}
+					'loop exist'
+					break innerLoop
+				}
+			}
+			defaultPageCount++
+			if(totalPage!=1){
+				defaultPageCount++
+				clickNextPageInPagination("//a[contains(text(), '›')]")
+				WebUI.delay(5)
+			}
+		}
+		return dataAvailable
+	}
+
+
+	def getData(int pageCount,String action,String expectedPractitionerName, String expectedEmail, String expectedSponsorName, String expectedSponsorRegistrationNo){
+		WebDriver driver = DriverFactory.getWebDriver()
+		boolean dataAvailable=false
+		int defaultPageCount=1
+		int totalPage
+		if(pageCount>0){
+			totalPage = pageCount-4
+		}else{
+
+			totalPage = 1
+		}
+
+		innerLoop : while (defaultPageCount<=totalPage){
+			WebElement practitionerTable = driver.findElement(By.xpath("//*[@id='frmPairUpload']/div/div[2]/div/div/table/tbody"))
+			List<WebElement> rowsPractitionerTable = practitionerTable.findElements(By.tagName("tr"))
+			for (int row : (1..rowsPractitionerTable.size())){
+				String actualPractitionerName = driver.findElement(By.xpath("//tr[${row}]/td[2]/span")).getText()
+				String actualEmail = driver.findElement(By.xpath("//tr[${row}]/td[3]/span")).getText()
+				String actualSponsorName = driver.findElement(By.xpath("//tr[${row}]/td[4]/span")).getText()
+				String actualSponsorRegistrationNo = driver.findElement(By.xpath("//tr[${row}]/td[5]/span")).getText()
+
+				if(actualPractitionerName.equals(expectedPractitionerName) && actualEmail.equals(expectedEmail) && actualSponsorName.equals(expectedSponsorName) && actualSponsorRegistrationNo.equals(expectedSponsorRegistrationNo)) {
+					dataAvailable=true
+					if(action.equalsIgnoreCase("Edit")){
+						WebElement locateEdit = driver.findElement(By.xpath("//tr[${row}]/td[8]/button[1]"))
+						locateEdit.click()
+						WebUI.delay(5)
+					}else if (action.equalsIgnoreCase("delete")){
+						WebElement locateDelete = driver.findElement(By.xpath("//tr[${row}]/td[8]/button[2]"))
+						locateDelete.click()
+						WebUI.delay(5)
+					}
+
+					'If value found in the webtable, then exit from the entire loop'
+					break innerLoop
+				}
+			}
+			defaultPageCount++
+			if(totalPage!=1){
+				defaultPageCount++
+				clickNextPageInPagination("//a[contains(text(), '›')]")
+				WebUI.delay(5)
+			}
+		}
+		return dataAvailable
+	}
+
+	@Keyword
+	def mandatoryCheck(String practitionerName,String email,String password, String secretKey,String sponsorName, String sponsorRegistrationNo){
+		if(practitionerName?.trim()){
+
+			TestObject setPractitionerName = findTestObject('PAIR Account Setup Page/input-Paralegalname')
+			WebUI.clearText(setPractitionerName)
+			WebUI.setText(setPractitionerName, practitionerName)
+			WebUI.delay(3)
+		}
+
+		if(email?.trim()){
+			TestObject setEmail = findTestObject('PAIR Account Setup Page/input-EmailAddress')
+			WebUI.clearText(setEmail)
+			WebUI.setText(setEmail, email)
+			WebUI.delay(3)
+		}
+
+		if(password?.trim()){
+			TestObject setPassword = findTestObject('PAIR Account Setup Page/input-Password')
+			WebUI.clearText(setPassword)
+			WebUI.setText(setPassword, password)
+			WebUI.delay(3)
+		}
+
+		if(secretKey?.trim()){
+			TestObject setSecretKey = findTestObject('PAIR Account Setup Page/input-Secretkey')
+			WebUI.clearText(setSecretKey)
+			WebUI.setText(setSecretKey, secretKey)
+			WebUI.delay(3)
+		}
+
+		TestObject setIsSponsored = findTestObject('PAIR Account Setup Page/checkbox-isSponsored')
+		WebUI.waitForElementClickable(setIsSponsored, 10)
+		WebUI.click(setIsSponsored)
+		WebUI.delay(3)
+
+		if(sponsorName?.trim()){
+			TestObject setSponsorName = findTestObject('PAIR Account Setup Page/input-SponsoredPracName')
+			WebUI.clearText(setSponsorName)
+			WebUI.setText(setSponsorName, sponsorName)
+			WebUI.delay(3)
+		}
+
+		if(sponsorRegistrationNo?.trim()){
+			TestObject setSponsorRegistrationNo = findTestObject('PAIR Account Setup Page/input-SponsorRegNo')
+			WebUI.clearText(setSponsorRegistrationNo)
+			WebUI.setText(setSponsorRegistrationNo, sponsorRegistrationNo)
+			WebUI.delay(3)
+		}
+
+		'Click Add Certificate button'
+		WebUI.click(findTestObject('PAIR Account Setup Page/button-Add Certificate'))
+		WebUI.delay(1)
+
+		def getValidationMessage = WebUI.getText(findTestObject('Object Repository/toasterpopup/div_ToasterSuccessMessage'))
+
+		return getValidationMessage
+	}
+
+	@Keyword
+	def addPractitioner(String practitionerName,String email,String password, String secretKey){
+
+		if(practitionerName?.trim()){
+
+			TestObject setPractitionerName = findTestObject('PAIR Account Setup Page/input-Paralegalname')
+			//WebUI.clearText(setPractitionerName)
+			WebUI.setText(setPractitionerName, practitionerName)
+
+		}
+
+		if(email?.trim()){
+			TestObject setEmail = findTestObject('PAIR Account Setup Page/input-Email')
+			//WebUI.clearText(setEmail)
+			WebUI.setText(setEmail, email)
+
+		}
+
+		if(password?.trim()){
+			TestObject setPassword = findTestObject('PAIR Account Setup Page/input-Password')
+			//WebUI.clearText(setPassword)
+			WebUI.setText(setPassword, password)
+
+		}
+
+		if(secretKey?.trim()){
+			TestObject setSecretKey = findTestObject('PAIR Account Setup Page/input-Secretkey')
+			//WebUI.clearText(setSecretKey)
+			WebUI.setText(setSecretKey, secretKey)
+
+		}
+
+		'Click Add Certificate button'
+		WebUI.click(findTestObject('PAIR Account Setup Page/button-Add Certificate'))
+		WebUI.delay(1)
+	}
+
+	@Keyword
+	def clickPairSyncRecord(practitionerName) {
+
+		WebDriver driver = DriverFactory.getWebDriver()
+		WebElement tblPairSyncAccount = driver.findElement(By.xpath('//div/table//tbody'))
+		List<WebElement> tblRows = tblPairSyncAccount.findElements(By.xpath("./tr"))
+		rows_count = tblRows.size()
+		for (int row = 1; row <= rows_count; row++) {
+			List<WebElement> elementList= driver.findElements(By.xpath("//table/tbody/tr[$row]/td[2]"))
+			for(WebElement we:elementList) {
+				obtainedList.add(we.getText())
+				if(we.getText().equalsIgnoreCase(practitionerName)) {
+					WebElement editRowElement = driver.findElement(By.xpath("//table/tbody/tr[$row]/td[6]"))
+					println editRowElement.isEnabled()
+					if(editRowElement.isEnabled()==true) {
+						editRowElement.click()
+						WebUI.acceptAlert()
+					}
+				}
+				break
+			}
+		}
+	}
+
+	@Keyword
+	def ArrayList addNewOfficeAction(pairActivities,nplCitation, source, sourceComments) {
+		int excelPairActivitiesCount
+		int rows_count
+		String sampleString
+		String[] items
+		List<String> itemList
+		int paCount
+
+		if(pairActivities?.trim()){
+			WebDriver driver = DriverFactory.getWebDriver()
+			TestObject setpairActivities = findTestObject('PAIR Account Setup Page/input-PAIRActivities')
+			sampleString = pairActivities
+			items = sampleString.split(",")
+			itemList = Arrays.asList(items)
+			excelPairActivitiesCount = itemList.size()
+			WebUI.click(setpairActivities)
+			Select selectDropdown = new Select(driver.findElement(By.xpath('//*[@id="office-action-sync-con"]/div/div[2]/div[1]/div/select')))
+			List<WebElement> listOptionDropdown = selectDropdown.getOptions()
+			rows_count = listOptionDropdown.size()
+
+			for (paCount=0 ; paCount < excelPairActivitiesCount; paCount++){
+				for (int row = 1; row <= rows_count; row++){
+					WebElement elementList= driver.findElement(By.xpath("//*[@id='office-action-sync-con']/div/div[2]/div[1]/div/select/option[${row}]"))
+					println elementList.getText()
+					String elementPairActivity= elementList.getAttribute("value")
+					if(elementPairActivity.equalsIgnoreCase(itemList.get(paCount))){
+						WebElement elementPADD= driver.findElement(By.xpath("//ul[@class='select2-results']/li[${row}]"))
+						elementPADD.click()
+						break
+					}
+				}
+			}
+
+			Actions actions = new Actions(driver)
+			WebElement elementLocator = driver.findElement(By.xpath("//*[@id='s2id_autogen1']"))
+			actions.contextClick(elementLocator).perform()
+
+		}
+
+		if(nplCitation?.trim()){
+			TestObject setnplCitation = findTestObject('PAIR Account Setup Page/input-NPLCitation')
+			WebUI.click(findTestObject('PAIR Account Setup Page/input-NPLCitation'))
+			WebUI.setText(setnplCitation, nplCitation)
+			WebUI.sendKeys(findTestObject('PAIR Account Setup Page/input-NPLCitation'),Keys.chord(Keys.TAB))
+		}
+
+		if(source?.trim()){
+			TestObject setSource = findTestObject('PAIR Account Setup Page/input-Source')
+			WebUI.selectOptionByLabel(setSource, source, false)
+		}
+
+		if(sourceComments?.trim()){
+			TestObject setSourceComments = findTestObject('PAIR Account Setup Page/input-SourceComments')
+			WebUI.setText(setSourceComments, sourceComments)
+		}
+
+		'Click Add Certificate button'
+		WebUI.click(findTestObject('PAIR Account Setup Page/button-AddOfficeAction'))
+		WebUI.delay(1)
+	}
+
+	def isOfficeActionRecordPresent(pairActivities) {
+
+		WebElement tblPairSyncAccount = driver.findElement(By.xpath('//*[@id="office-action-sync-con"]/div/div[4]/table/tbody'))
+		List<WebElement> tblRows = tblPairSyncAccount.findElements(By.xpath("./tr"))
+		rows_count = tblRows.size()
+		println tblRows.size()
+		for (int row = 1; row <= rows_count; row++) {
+			List<WebElement> elementListOAPairActivity= driver.findElements(By.xpath("//*[@id='office-action-sync-con']/div/div[4]/table/tbody/tr[$row]/td[1]"))
+
+			for(WebElement webElementOAPairName:elementListOAPairActivity) {
+				obtainedListOAPairName.add(webElementOAPairName.getText())
+				println webElementOAPairName.getText()
+				if(webElementOAPairName.getText().equalsIgnoreCase(pairActivities)) {
+					officeActionNPL= true
+				}
+				break
+			}
+
+		}
+		return officeActionNPL
+	}
+}
